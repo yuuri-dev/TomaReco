@@ -3,22 +3,44 @@ import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 export default function Home() {
   const [records, setRecords] = useState<{ day: number; title: string }[]>([]);
-  const days = Array.from({ length: 35 }, (_, i) => ({
-    day: i + 1,
-    hasStudy: Math.random() > 0.7,
-  }));
+
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const [showInput, setShowInput] = useState(false);
   const [title, setTitle] = useState('');
+
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth();
+
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  const days = Array.from({ length: daysInMonth }, (_, i) => ({
+    day: i + 1,
+  }));
+  const firstDay = new Date(year, month, 1).getDay();
+
+  const calendarDays = [...Array(firstDay).fill(null), ...days];
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Tomato Study 🍅</Text>
 
       <View style={styles.calendar}>
+        <View style={styles.weekRow}>
+          {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((d) => (
+            <Text key={d} style={styles.week}>
+              {d}
+            </Text>
+          ))}
+        </View>
         <View style={styles.grid}>
-          {days.map((item) => {
+          {calendarDays.map((item, index) => {
+            if (!item) {
+              return <View key={index} style={styles.day} />;
+            }
+
             const hasStudy = records.some((r) => r.day === item.day);
+
             return (
               <Pressable
                 key={item.day}
@@ -93,11 +115,9 @@ const styles = StyleSheet.create({
 
   calendar: {
     width: '90%',
-    height: 400,
     backgroundColor: '#eee',
-    justifyContent: 'center',
-    alignItems: 'center',
     borderRadius: 10,
+    padding: 10,
   },
   grid: {
     flexDirection: 'row',
@@ -106,8 +126,8 @@ const styles = StyleSheet.create({
   },
 
   day: {
-    width: 40,
-    height: 40,
+    width: '14.28%',
+    aspectRatio: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -164,5 +184,17 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     alignItems: 'center',
+  },
+  weekRow: {
+    flexDirection: 'row',
+    width: '90%',
+    justifyContent: 'space-between',
+    marginBottom: 5,
+  },
+
+  week: {
+    width: '14.28%',
+    textAlign: 'center',
+    fontWeight: '600',
   },
 });
