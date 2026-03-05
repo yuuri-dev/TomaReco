@@ -2,6 +2,7 @@ import Calendar from '@/components/Calendar';
 import { Record } from '@/type/record';
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 
 export default function Home() {
   const [records, setRecords] = useState<Record[]>([]);
@@ -29,6 +30,13 @@ export default function Home() {
     setCurrentDate(newDate);
   }
 
+const pan = Gesture.Pan()
+  .activeOffsetX([-20, 20])
+  .onEnd((e) => {
+    if (e.translationX > 50) changeMonth(-1);
+    if (e.translationX < -50) changeMonth(1);
+  })
+  .runOnJS(true);
   const monthNames = [
     'January',
     'February',
@@ -61,14 +69,18 @@ export default function Home() {
           <Text style={styles.arrow}>▶</Text>
         </Pressable>
       </View>
-      <Calendar
-        calendarDays={calendarDays}
-        records={records}
-        setSelectedDay={setSelectedDay}
-        year={year}
-        month={month}
-        selectedDay={selectedDay}
-      />
+      <GestureDetector gesture={pan}>
+        <View>
+          <Calendar
+            calendarDays={calendarDays}
+            records={records}
+            setSelectedDay={setSelectedDay}
+            year={year}
+            month={month}
+            selectedDay={selectedDay}
+          />
+        </View>
+      </GestureDetector>
       {selectedDay && (
         <View style={styles.log}>
           <Text style={styles.logTitle}>{selectedDay}日のログ</Text>
