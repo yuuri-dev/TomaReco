@@ -67,6 +67,7 @@ export default function Home() {
         setSelectedDay={setSelectedDay}
         year={year}
         month={month}
+        selectedDay={selectedDay}
       />
       {selectedDay && (
         <View style={styles.log}>

@@ -8,6 +8,7 @@ type Props = {
   setSelectedDay: (day: number) => void;
   year: number;
   month: number; // 0〜11の月 (Date.getMonth()のまま)
+  selectedDay: number | null;
 };
 
 export default function Calendar({
@@ -16,6 +17,7 @@ export default function Calendar({
   setSelectedDay,
   year,
   month,
+  selectedDay,
 }: Props) {
   const today = new Date();
 
@@ -50,6 +52,7 @@ export default function Calendar({
               day={item.day}
               hasStudy={hasStudy}
               isToday={isToday}
+              isSelected={selectedDay === item.day}
               onPress={() => setSelectedDay(item.day)}
             />
           );
