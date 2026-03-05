@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 export default function Home() {
+  const [records, setRecords] = useState<{ day: number; title: string }[]>([]);
   const days = Array.from({ length: 35 }, (_, i) => ({
     day: i + 1,
     hasStudy: Math.random() > 0.7,
@@ -16,23 +17,29 @@ export default function Home() {
 
       <View style={styles.calendar}>
         <View style={styles.grid}>
-          {days.map((item) => (
-            <Pressable
-              key={item.day}
-              style={styles.day}
-              onPress={() => setSelectedDay(item.day)}
-            >
-              <Text style={styles.date}>{item.day}</Text>
-              <Text>{item.hasStudy ? '🍅' : '🌱'}</Text>
-            </Pressable>
-          ))}
+          {days.map((item) => {
+            const hasStudy = records.some((r) => r.day === item.day);
+            return (
+              <Pressable
+                key={item.day}
+                style={styles.day}
+                onPress={() => setSelectedDay(item.day)}
+              >
+                <Text style={styles.date}>{item.day}</Text>
+                <Text>{hasStudy ? '🍅' : '🌱'}</Text>
+              </Pressable>
+            );
+          })}
         </View>
       </View>
       {selectedDay && (
         <View style={styles.log}>
           <Text style={styles.logTitle}>{selectedDay}日のログ</Text>
-          <Text>React Native勉強</Text>
-          <Text>Next.js記事</Text>
+          {records
+            .filter((r) => r.day === selectedDay)
+            .map((r, i) => (
+              <Text key={i}>{r.title}</Text>
+            ))}
         </View>
       )}
       <Pressable style={styles.addButton} onPress={() => setShowInput(true)}>
@@ -48,7 +55,21 @@ export default function Home() {
             style={styles.input}
           />
 
-          <Pressable style={styles.saveButton}>
+          <Pressable
+            style={styles.saveButton}
+            onPress={() => {
+              if (!selectedDay) return;
+
+              const newRecord = {
+                day: selectedDay,
+                title: title,
+              };
+
+              setRecords([...records, newRecord]);
+              setTitle('');
+              setShowInput(false);
+            }}
+          >
             <Text style={{ color: 'white' }}>保存</Text>
           </Pressable>
         </View>
