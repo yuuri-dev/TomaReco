@@ -32,7 +32,7 @@ export default function Calendar({
 
           return (
             <DayCell
-              key={item.day}
+              key={index}
               day={item.day}
               hasStudy={hasStudy}
               onPress={() => setSelectedDay(item.day)}
