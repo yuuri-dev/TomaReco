@@ -1,9 +1,10 @@
 import Calendar from '@/components/Calendar';
+import { Record } from '@/type/record';
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 export default function Home() {
-  const [records, setRecords] = useState<{ day: number; title: string }[]>([]);
+  const [records, setRecords] = useState<Record[]>([]);
 
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const [showInput, setShowInput] = useState(false);
@@ -64,12 +65,17 @@ export default function Home() {
         calendarDays={calendarDays}
         records={records}
         setSelectedDay={setSelectedDay}
+        year={year}
+        month={month}
       />
       {selectedDay && (
         <View style={styles.log}>
           <Text style={styles.logTitle}>{selectedDay}日のログ</Text>
           {records
-            .filter((r) => r.day === selectedDay)
+            .filter(
+              (r) =>
+                r.year === year && r.month === month && r.day === selectedDay
+            )
             .map((r, i) => (
               <Text key={i}>{r.title}</Text>
             ))}
@@ -94,6 +100,8 @@ export default function Home() {
               if (!selectedDay) return;
 
               const newRecord = {
+                year,
+                month,
                 day: selectedDay,
                 title: title,
               };

@@ -1,16 +1,21 @@
 import { StyleSheet, Text, View } from 'react-native';
-import DayCell from './Daycell';
+import DayCell from './DayCell';
+import { Record } from '@/type/record';
 
 type Props = {
   calendarDays: ({ day: number } | null)[];
-  records: { day: number; title: string }[];
+  records: Record[];
   setSelectedDay: (day: number) => void;
+  year: number;
+  month: number; // 0〜11の月 (Date.getMonth()のまま)
 };
 
 export default function Calendar({
   calendarDays,
   records,
   setSelectedDay,
+  year,
+  month,
 }: Props) {
   return (
     <View style={styles.calendar}>
@@ -28,7 +33,9 @@ export default function Calendar({
             return <View key={index} style={styles.day} />;
           }
 
-          const hasStudy = records.some((r) => r.day === item.day);
+          const hasStudy = records.some(
+            (r) => r.year === year && r.month === month && r.day === item.day
+          );
 
           return (
             <DayCell
