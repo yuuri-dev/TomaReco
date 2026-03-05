@@ -8,10 +8,10 @@ export default function Home() {
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const [showInput, setShowInput] = useState(false);
   const [title, setTitle] = useState('');
+  const [currentDate, setCurrentDate] = useState(new Date());
 
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = today.getMonth();
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
 
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
@@ -22,10 +22,44 @@ export default function Home() {
 
   const calendarDays = [...Array(firstDay).fill(null), ...days];
 
+  function changeMonth(diff: number) {
+    const newDate = new Date(currentDate);
+    newDate.setMonth(currentDate.getMonth() + diff);
+    setCurrentDate(newDate);
+  }
+
+  const monthNames = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Tomato Study 🍅</Text>
 
+      <View style={styles.monthHeader}>
+        <Pressable onPress={() => changeMonth(-1)}>
+          <Text style={styles.arrow}>◀</Text>
+        </Pressable>
+
+        <Text style={styles.monthText}>
+          {monthNames[month]} {year}
+        </Text>
+
+        <Pressable onPress={() => changeMonth(1)}>
+          <Text style={styles.arrow}>▶</Text>
+        </Pressable>
+      </View>
       <Calendar
         calendarDays={calendarDays}
         records={records}
@@ -173,5 +207,20 @@ const styles = StyleSheet.create({
     width: '14.28%',
     textAlign: 'center',
     fontWeight: '600',
+  },
+  monthHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+
+  monthText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginHorizontal: 20,
+  },
+
+  arrow: {
+    fontSize: 20,
   },
 });
