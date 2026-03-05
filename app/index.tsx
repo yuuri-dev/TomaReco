@@ -1,3 +1,4 @@
+import Calendar from '@/components/Calendar';
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
@@ -25,35 +26,11 @@ export default function Home() {
     <View style={styles.container}>
       <Text style={styles.title}>Tomato Study 🍅</Text>
 
-      <View style={styles.calendar}>
-        <View style={styles.weekRow}>
-          {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((d) => (
-            <Text key={d} style={styles.week}>
-              {d}
-            </Text>
-          ))}
-        </View>
-        <View style={styles.grid}>
-          {calendarDays.map((item, index) => {
-            if (!item) {
-              return <View key={index} style={styles.day} />;
-            }
-
-            const hasStudy = records.some((r) => r.day === item.day);
-
-            return (
-              <Pressable
-                key={item.day}
-                style={styles.day}
-                onPress={() => setSelectedDay(item.day)}
-              >
-                <Text style={styles.date}>{item.day}</Text>
-                <Text>{hasStudy ? '🍅' : '🌱'}</Text>
-              </Pressable>
-            );
-          })}
-        </View>
-      </View>
+      <Calendar
+        calendarDays={calendarDays}
+        records={records}
+        setSelectedDay={setSelectedDay}
+      />
       {selectedDay && (
         <View style={styles.log}>
           <Text style={styles.logTitle}>{selectedDay}日のログ</Text>
