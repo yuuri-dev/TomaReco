@@ -1,6 +1,6 @@
+import { Record } from '@/type/record';
 import { StyleSheet, Text, View } from 'react-native';
 import DayCell from './DayCell';
-import { Record } from '@/type/record';
 
 type Props = {
   calendarDays: ({ day: number } | null)[];
@@ -17,6 +17,8 @@ export default function Calendar({
   year,
   month,
 }: Props) {
+  const today = new Date();
+
   return (
     <View style={styles.calendar}>
       <View style={styles.weekRow}>
@@ -37,11 +39,17 @@ export default function Calendar({
             (r) => r.year === year && r.month === month && r.day === item.day
           );
 
+          const isToday =
+            today.getFullYear() === year &&
+            today.getMonth() === month &&
+            today.getDate() === item.day;
+
           return (
             <DayCell
               key={index}
               day={item.day}
               hasStudy={hasStudy}
+              isToday={isToday}
               onPress={() => setSelectedDay(item.day)}
             />
           );
@@ -54,9 +62,15 @@ export default function Calendar({
 const styles = StyleSheet.create({
   calendar: {
     width: '90%',
-    backgroundColor: '#eee',
-    borderRadius: 10,
-    padding: 10,
+    backgroundColor: 'white',
+    borderRadius: 16,
+    paddingVertical: 15,
+
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+
+    elevation: 5,
   },
 
   grid: {

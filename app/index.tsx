@@ -165,18 +165,25 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 5,
   },
-  addButton: {
-    position: 'absolute',
-    bottom: 40,
-    right: 30,
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#ff6347',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+addButton: {
+  position: "absolute",
+  bottom: 40,
+  right: 30,
+  width: 65,
+  height: 65,
+  borderRadius: 32,
 
+  backgroundColor: "#ff6347",
+
+  justifyContent: "center",
+  alignItems: "center",
+
+  shadowColor: "#000",
+  shadowOpacity: 0.3,
+  shadowRadius: 10,
+
+  elevation: 8
+},
   addText: {
     fontSize: 30,
     color: 'white',
