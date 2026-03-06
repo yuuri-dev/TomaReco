@@ -1,4 +1,4 @@
-import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 type Props = {
   newGenreName: string;
@@ -29,31 +29,65 @@ export default function AddGenreForm({
       />
 
       <View style={styles.colorRow}>
-        {['#4CAF50', '#2196F3', '#FF9800', '#E91E63'].map((c) => (
-          <Pressable
-            key={c}
-            onPress={() => setNewGenreColor(c)}
-            style={[
-              styles.color,
-              { backgroundColor: c },
-              newGenreColor === c && styles.selected,
-            ]}
-          />
-        ))}
+        {['#4CAF50', '#2196F3', '#FF9800', '#E91E63'].map((c) => {
+          const selected = newGenreColor === c;
+
+          return (
+            <Pressable
+              key={c}
+              onPress={() => setNewGenreColor(c)}
+              style={[
+                styles.color,
+                { backgroundColor: c },
+                selected && styles.selectedColor,
+              ]}
+            >
+              {selected && <Text style={styles.check}>✓</Text>}
+            </Pressable>
+          );
+        })}
       </View>
 
-      <Pressable style={styles.saveButton} onPress={saveGenre}>
-        <Text style={styles.saveText}>Save</Text>
-      </Pressable>
+      <View style={styles.footer}>
+        <Pressable style={styles.saveButton} onPress={saveGenre}>
+          <Text style={styles.saveText}>Save</Text>
+        </Pressable>
 
-      <Pressable style={styles.backButton} onPress={goBack}>
-        <Text style={styles.backText}>Back</Text>
-      </Pressable>
+        <Pressable onPress={goBack}>
+          <Text style={styles.backText}>Back</Text>
+        </Pressable>
+      </View>
     </>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'space-between',
+  },
+
+  footer: {
+    marginTop: 20,
+  },
+
+  saveButton: {
+    backgroundColor: '#ff6347',
+    padding: 14,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+
+  saveText: {
+    color: 'white',
+    fontWeight: '600',
+  },
+
+  backText: {
+    textAlign: 'center',
+    marginTop: 10,
+    color: '#666',
+  },
   title: {
     fontSize: 18,
     fontWeight: 'bold',
@@ -68,41 +102,36 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 
-  colorRow: {
-    flexDirection: 'row',
-    marginBottom: 15,
-  },
-
-  color: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    marginRight: 10,
-  },
-
   selected: {
     borderWidth: 3,
     borderColor: '#333',
   },
+  colorRow: {
+    flexDirection: 'row',
+    marginBottom: 20,
+  },
 
-  saveButton: {
-    backgroundColor: '#ff6347',
-    padding: 12,
-    borderRadius: 8,
+  color: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    marginRight: 12,
+    justifyContent: 'center',
     alignItems: 'center',
   },
 
-  saveText: {
+  selectedColor: {
+    borderWidth: 3,
+    borderColor: '#333',
+  },
+
+  check: {
     color: 'white',
-    fontWeight: '600',
+    fontWeight: 'bold',
   },
 
   backButton: {
     marginTop: 10,
     alignItems: 'center',
-  },
-
-  backText: {
-    color: '#666',
   },
 });

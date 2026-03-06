@@ -6,6 +6,7 @@ import {
   Text,
   StyleSheet,
 } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import GenreSelector from '../Genre/GenreSelector';
 import AddGenreForm from '../Genre/AddGenreForm';
 
@@ -50,54 +51,61 @@ export default function AddRecordModal({
   saveRecord,
   saveGenre,
 }: Props) {
+  const pan = Gesture.Pan()
+    .onEnd((e) => {
+      if (e.translationY > 80) {
+        close();
+      }
+    })
+    .runOnJS(true);
+
   return (
     <Modal visible={visible} transparent animationType="slide">
       <View style={styles.overlay}>
-        {/* 背景タップ */}
         <Pressable style={StyleSheet.absoluteFill} onPress={close} />
 
-        {/* Bottom Sheet */}
-        <View style={styles.sheet}>
-          {/* ドラッグバー */}
-          <View style={styles.dragBar} />
+        <GestureDetector gesture={pan}>
+          <View style={styles.sheet}>
+            <View style={styles.dragBar} />
 
-          {!showAddGenre && (
-            <>
-              <Text style={styles.title}>Add Record</Text>
+            {!showAddGenre && (
+              <>
+                <Text style={styles.title}>Add Record</Text>
 
-              <TextInput
-                value={title}
-                onChangeText={setTitle}
-                placeholder="記録する内容"
-                style={styles.input}
+                <TextInput
+                  value={title}
+                  onChangeText={setTitle}
+                  placeholder="記録する内容"
+                  style={styles.input}
+                />
+
+                <Text style={styles.genreLabel}>Genre</Text>
+
+                <GenreSelector
+                  genres={genres}
+                  selectedGenreId={selectedGenreId}
+                  setSelectedGenreId={setSelectedGenreId}
+                  openAddGenre={() => setShowAddGenre(true)}
+                />
+
+                <Pressable style={styles.saveButton} onPress={saveRecord}>
+                  <Text style={styles.saveText}>保存</Text>
+                </Pressable>
+              </>
+            )}
+
+            {showAddGenre && (
+              <AddGenreForm
+                newGenreName={newGenreName}
+                setNewGenreName={setNewGenreName}
+                newGenreColor={newGenreColor}
+                setNewGenreColor={setNewGenreColor}
+                saveGenre={saveGenre}
+                goBack={() => setShowAddGenre(false)}
               />
-
-              <Text style={styles.genreLabel}>Genre</Text>
-
-              <GenreSelector
-                genres={genres}
-                selectedGenreId={selectedGenreId}
-                setSelectedGenreId={setSelectedGenreId}
-                openAddGenre={() => setShowAddGenre(true)}
-              />
-
-              <Pressable style={styles.saveButton} onPress={saveRecord}>
-                <Text style={styles.saveText}>保存</Text>
-              </Pressable>
-            </>
-          )}
-
-          {showAddGenre && (
-            <AddGenreForm
-              newGenreName={newGenreName}
-              setNewGenreName={setNewGenreName}
-              newGenreColor={newGenreColor}
-              setNewGenreColor={setNewGenreColor}
-              saveGenre={saveGenre}
-              goBack={() => setShowAddGenre(false)}
-            />
-          )}
-        </View>
+            )}
+          </View>
+        </GestureDetector>
       </View>
     </Modal>
   );
@@ -111,11 +119,11 @@ const styles = StyleSheet.create({
   },
 
   sheet: {
+    height: '80%',
     backgroundColor: 'white',
     padding: 20,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    minHeight: 320,
   },
 
   dragBar: {
@@ -128,22 +136,22 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 10,
+    marginBottom: 12,
   },
 
   input: {
     borderWidth: 1,
     borderColor: '#ddd',
-    padding: 10,
-    borderRadius: 8,
-    marginBottom: 12,
+    padding: 12,
+    borderRadius: 10,
+    marginBottom: 14,
   },
 
   genreLabel: {
-    marginBottom: 5,
-    fontWeight: '500',
+    marginBottom: 8,
+    fontWeight: '600',
   },
 
   saveButton: {
