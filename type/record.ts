@@ -3,4 +3,5 @@ export type Record = {
   month: number;
   day: number;
   title: string;
+  genreId: string;
 };

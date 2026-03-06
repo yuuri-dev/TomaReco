@@ -5,12 +5,20 @@ import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 
 export default function Home() {
+  const defaultGenres = [
+    { id: 'programming', name: 'プログラミング' },
+    { id: 'reading', name: '読書' },
+    { id: 'math', name: '資格勉強' },
+  ];
+
   const [records, setRecords] = useState<Record[]>([]);
 
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const [showInput, setShowInput] = useState(false);
   const [title, setTitle] = useState('');
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [genres, setGenres] = useState(defaultGenres);
+  const [selectedGenreId, setSelectedGenreId] = useState(genres[0].id);
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
@@ -30,13 +38,13 @@ export default function Home() {
     setCurrentDate(newDate);
   }
 
-const pan = Gesture.Pan()
-  .activeOffsetX([-20, 20])
-  .onEnd((e) => {
-    if (e.translationX > 50) changeMonth(-1);
-    if (e.translationX < -50) changeMonth(1);
-  })
-  .runOnJS(true);
+  const pan = Gesture.Pan()
+    .activeOffsetX([-20, 20])
+    .onEnd((e) => {
+      if (e.translationX > 50) changeMonth(-1);
+      if (e.translationX < -50) changeMonth(1);
+    })
+    .runOnJS(true);
   const monthNames = [
     'January',
     'February',
@@ -89,9 +97,14 @@ const pan = Gesture.Pan()
               (r) =>
                 r.year === year && r.month === month && r.day === selectedDay
             )
-            .map((r, i) => (
-              <Text key={i}>{r.title}</Text>
-            ))}
+            .map((r, i) => {
+              const genre = genres.find((g) => g.id === r.genreId);
+              return (
+                <Text key={i}>
+                  [{genre?.name}] {r.title}
+                </Text>
+              );
+            })}
         </View>
       )}
       <Pressable style={styles.addButton} onPress={() => setShowInput(true)}>
@@ -107,6 +120,33 @@ const pan = Gesture.Pan()
             style={styles.input}
           />
 
+          <Text style={{ marginBottom: 5 }}>Genre</Text>
+
+          <View style={{ flexDirection: 'row', marginBottom: 10 }}>
+            {genres.map((g) => (
+              <Pressable
+                key={g.id}
+                onPress={() => setSelectedGenreId(g.id)}
+                style={{
+                  paddingHorizontal: 10,
+                  paddingVertical: 5,
+                  marginRight: 8,
+                  borderRadius: 8,
+                  backgroundColor:
+                    selectedGenreId === g.id ? '#ff6347' : '#eee',
+                }}
+              >
+                <Text
+                  style={{
+                    color: selectedGenreId === g.id ? 'white' : 'black',
+                  }}
+                >
+                  {g.name}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
+
           <Pressable
             style={styles.saveButton}
             onPress={() => {
@@ -116,7 +156,8 @@ const pan = Gesture.Pan()
                 year,
                 month,
                 day: selectedDay,
-                title: title,
+                title,
+                genreId: selectedGenreId,
               };
 
               setRecords([...records, newRecord]);
