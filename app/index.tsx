@@ -1,4 +1,4 @@
-import Calendar from '@/components/Calendar';
+import Calendar from '@/components/Calendar/Calendar';
 import { Record } from '@/type/record';
 import { useState } from 'react';
 import {
