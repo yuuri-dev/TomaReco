@@ -1,14 +1,14 @@
 import {
   Modal,
-  View,
   Pressable,
-  TextInput,
-  Text,
   StyleSheet,
+  Text,
+  TextInput,
+  View,
 } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import GenreSelector from '../Genre/GenreSelector';
 import AddGenreForm from '../Genre/AddGenreForm';
+import GenreSelector from '../Genre/GenreSelector';
 
 type Genre = {
   id: string;
@@ -66,43 +66,47 @@ export default function AddRecordModal({
 
         <GestureDetector gesture={pan}>
           <View style={styles.sheet}>
-            <View style={styles.dragBar} />
+            <View style={styles.topContent}>
+              <View style={styles.dragBar} />
+
+              {!showAddGenre && (
+                <>
+                  <Text style={styles.title}>Add Record</Text>
+
+                  <TextInput
+                    value={title}
+                    onChangeText={setTitle}
+                    placeholder="記録する内容"
+                    style={styles.input}
+                  />
+
+                  <Text style={styles.genreLabel}>Genre</Text>
+
+                  <GenreSelector
+                    genres={genres}
+                    selectedGenreId={selectedGenreId}
+                    setSelectedGenreId={setSelectedGenreId}
+                    openAddGenre={() => setShowAddGenre(true)}
+                  />
+                </>
+              )}
+
+              {showAddGenre && (
+                <AddGenreForm
+                  newGenreName={newGenreName}
+                  setNewGenreName={setNewGenreName}
+                  newGenreColor={newGenreColor}
+                  setNewGenreColor={setNewGenreColor}
+                  saveGenre={saveGenre}
+                  goBack={() => setShowAddGenre(false)}
+                />
+              )}
+            </View>
 
             {!showAddGenre && (
-              <>
-                <Text style={styles.title}>Add Record</Text>
-
-                <TextInput
-                  value={title}
-                  onChangeText={setTitle}
-                  placeholder="記録する内容"
-                  style={styles.input}
-                />
-
-                <Text style={styles.genreLabel}>Genre</Text>
-
-                <GenreSelector
-                  genres={genres}
-                  selectedGenreId={selectedGenreId}
-                  setSelectedGenreId={setSelectedGenreId}
-                  openAddGenre={() => setShowAddGenre(true)}
-                />
-
-                <Pressable style={styles.saveButton} onPress={saveRecord}>
-                  <Text style={styles.saveText}>保存</Text>
-                </Pressable>
-              </>
-            )}
-
-            {showAddGenre && (
-              <AddGenreForm
-                newGenreName={newGenreName}
-                setNewGenreName={setNewGenreName}
-                newGenreColor={newGenreColor}
-                setNewGenreColor={setNewGenreColor}
-                saveGenre={saveGenre}
-                goBack={() => setShowAddGenre(false)}
-              />
+              <Pressable style={styles.saveButton} onPress={saveRecord}>
+                <Text style={styles.saveText}>保存</Text>
+              </Pressable>
             )}
           </View>
         </GestureDetector>
@@ -117,7 +121,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.35)',
     justifyContent: 'flex-end',
   },
-
+  topContent: {
+    justifyContent: 'flex-start',
+  },
   sheet: {
     height: '80%',
     backgroundColor: 'white',
@@ -148,6 +154,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 14,
   },
+  input_label: {
+    marginBottom: 4,
+    fontWeight: '600',
+  },
 
   genreLabel: {
     marginBottom: 8,
@@ -155,11 +165,15 @@ const styles = StyleSheet.create({
   },
 
   saveButton: {
+    position: 'absolute',
+    bottom: 30,
+    left: 20,
+    right: 20,
+
     backgroundColor: '#ff6347',
     padding: 14,
     borderRadius: 10,
     alignItems: 'center',
-    marginTop: 10,
   },
 
   saveText: {
