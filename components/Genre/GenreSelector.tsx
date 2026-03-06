@@ -10,14 +10,12 @@ type Props = {
   genres: Genre[];
   selectedGenreId: string;
   setSelectedGenreId: (id: string) => void;
-  openAddGenre: () => void;
 };
 
 export default function GenreSelector({
   genres,
   selectedGenreId,
   setSelectedGenreId,
-  openAddGenre,
 }: Props) {
   return (
     <ScrollView
@@ -47,10 +45,6 @@ export default function GenreSelector({
           </Pressable>
         );
       })}
-
-      <Pressable style={styles.addGenre} onPress={openAddGenre}>
-        <Text style={{ fontSize: 18 }}>＋</Text>
-      </Pressable>
     </ScrollView>
   );
 }

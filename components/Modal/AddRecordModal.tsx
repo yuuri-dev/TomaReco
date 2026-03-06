@@ -86,8 +86,18 @@ export default function AddRecordModal({
                     genres={genres}
                     selectedGenreId={selectedGenreId}
                     setSelectedGenreId={setSelectedGenreId}
-                    openAddGenre={() => setShowAddGenre(true)}
                   />
+                  <View style={styles.addGenreRow}>
+                    <Pressable
+                      style={({ pressed }) => [
+                        styles.addGenreButton,
+                        pressed && styles.addGenrePressed,
+                      ]}
+                      onPress={() => setShowAddGenre(true)}
+                    >
+                      <Text style={styles.addGenreText}>＋ 新しいジャンル</Text>
+                    </Pressable>
+                  </View>
                 </>
               )}
 
@@ -179,5 +189,29 @@ const styles = StyleSheet.create({
   saveText: {
     color: 'white',
     fontWeight: '600',
+  },
+
+  addGenreRow: {
+    alignItems: 'flex-end',
+    marginTop: 8,
+  },
+
+  addGenreButton: {
+    backgroundColor: '#f3f3f3',
+    borderWidth: 1,
+    borderColor: '#e2e2e2',
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 6,
+  },
+
+  addGenrePressed: {
+    opacity: 0.6,
+  },
+
+  addGenreText: {
+    fontSize: 12,
+    color: '#444',
+    fontWeight: '500',
   },
 });
