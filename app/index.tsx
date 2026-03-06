@@ -1,7 +1,14 @@
 import Calendar from '@/components/Calendar';
 import { Record } from '@/type/record';
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import {
+  Modal,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 
 export default function Home() {
@@ -131,56 +138,61 @@ export default function Home() {
             onChangeText={setTitle}
             style={styles.input}
           />
-          {showAddGenre && (
-            <View style={styles.genreModal}>
-              <Text style={{ fontWeight: 'bold', marginBottom: 10 }}>
-                Add Genre
-              </Text>
+          <Modal visible={showAddGenre} transparent animationType="fade">
+            <Pressable
+              style={styles.modalOverlay}
+              onPress={() => setShowAddGenre(false)}
+            >
+              <Pressable style={styles.genreModal} onPress={() => {}}>
+                <Text style={{ fontWeight: 'bold', marginBottom: 10 }}>
+                  Add Genre
+                </Text>
 
-              <TextInput
-                placeholder="Genre name"
-                value={newGenreName}
-                onChangeText={setNewGenreName}
-                style={styles.input}
-              />
+                <TextInput
+                  placeholder="Genre name"
+                  value={newGenreName}
+                  onChangeText={setNewGenreName}
+                  style={styles.input}
+                />
 
-              <View style={{ flexDirection: 'row', marginBottom: 10 }}>
-                {['#4CAF50', '#2196F3', '#FF9800', '#E91E63'].map((c) => (
-                  <Pressable
-                    key={c}
-                    onPress={() => setNewGenreColor(c)}
-                    style={{
-                      width: 30,
-                      height: 30,
-                      borderRadius: 15,
-                      backgroundColor: c,
-                      marginRight: 10,
-                      borderWidth: newGenreColor === c ? 2 : 0,
-                    }}
-                  />
-                ))}
-              </View>
+                <View style={{ flexDirection: 'row', marginBottom: 10 }}>
+                  {['#4CAF50', '#2196F3', '#FF9800', '#E91E63'].map((c) => (
+                    <Pressable
+                      key={c}
+                      onPress={() => setNewGenreColor(c)}
+                      style={{
+                        width: 30,
+                        height: 30,
+                        borderRadius: 15,
+                        backgroundColor: c,
+                        marginRight: 10,
+                        borderWidth: newGenreColor === c ? 2 : 0,
+                      }}
+                    />
+                  ))}
+                </View>
 
-              <Pressable
-                style={styles.saveButton}
-                onPress={() => {
-                  const newGenre = {
-                    id: Date.now().toString(),
-                    name: newGenreName,
-                    color: newGenreColor,
-                  };
+                <Pressable
+                  style={styles.saveButton}
+                  onPress={() => {
+                    const newGenre = {
+                      id: Date.now().toString(),
+                      name: newGenreName,
+                      color: newGenreColor,
+                    };
 
-                  setGenres([...genres, newGenre]);
-                  setSelectedGenreId(newGenre.id);
+                    setGenres([...genres, newGenre]);
+                    setSelectedGenreId(newGenre.id);
 
-                  setNewGenreName('');
-                  setShowAddGenre(false);
-                }}
-              >
-                <Text style={{ color: 'white' }}>Save</Text>
+                    setNewGenreName('');
+                    setShowAddGenre(false);
+                  }}
+                >
+                  <Text style={{ color: 'white' }}>Save</Text>
+                </Pressable>
               </Pressable>
-            </View>
-          )}
+            </Pressable>
+          </Modal>
 
           <Text style={{ marginBottom: 5 }}>Genre</Text>
 
@@ -294,20 +306,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#ddd',
   },
 
-  genreModal: {
-    position: 'absolute',
-    bottom: 200,
-    width: '90%',
-    backgroundColor: 'white',
-    padding: 15,
-    borderRadius: 12,
-
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowRadius: 10,
-
-    elevation: 10,
-  },
   addButton: {
     position: 'absolute',
     bottom: 40,
@@ -410,5 +408,18 @@ const styles = StyleSheet.create({
 
   recordTitle: {
     fontSize: 14,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  genreModal: {
+    width: '80%',
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 16,
   },
 });
