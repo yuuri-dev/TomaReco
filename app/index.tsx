@@ -139,132 +139,143 @@ export default function Home() {
           />
 
           <View style={styles.inputModal}>
-            <Text
-              style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 10 }}
-            >
-              Add Record
-            </Text>
+            {!showAddGenre && (
+              <>
+                <Text
+                  style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 10 }}
+                >
+                  Add Record
+                </Text>
 
-            <TextInput
-              placeholder="記録する内容"
-              value={title}
-              onChangeText={setTitle}
-              style={styles.input}
-            />
+                <TextInput
+                  placeholder="記録する内容"
+                  value={title}
+                  onChangeText={setTitle}
+                  style={styles.input}
+                />
 
-            <Text style={{ marginBottom: 5 }}>Genre</Text>
+                <Text style={{ marginBottom: 5 }}>Genre</Text>
 
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              style={{ marginBottom: 10 }}
-              contentContainerStyle={{ paddingRight: 20 }}
-            >
-              {genres.map((g) => (
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  style={{ marginBottom: 10 }}
+                  contentContainerStyle={{ paddingRight: 20 }}
+                >
+                  {genres.map((g) => (
+                    <Pressable
+                      key={g.id}
+                      onPress={() => setSelectedGenreId(g.id)}
+                      style={{
+                        paddingHorizontal: 12,
+                        paddingVertical: 6,
+                        marginRight: 8,
+                        borderRadius: 8,
+                        backgroundColor:
+                          selectedGenreId === g.id ? g.color : '#eee',
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: selectedGenreId === g.id ? 'white' : 'black',
+                        }}
+                      >
+                        {g.name}
+                      </Text>
+                    </Pressable>
+                  ))}
+
+                  <Pressable
+                    onPress={() => setShowAddGenre(true)}
+                    style={styles.addGenreButton}
+                  >
+                    <Text style={{ fontWeight: '600' }}>＋</Text>
+                  </Pressable>
+                </ScrollView>
+
                 <Pressable
-                  key={g.id}
-                  onPress={() => setSelectedGenreId(g.id)}
-                  style={{
-                    paddingHorizontal: 12,
-                    paddingVertical: 6,
-                    marginRight: 8,
-                    borderRadius: 8,
-                    backgroundColor:
-                      selectedGenreId === g.id ? g.color : '#eee',
+                  style={styles.saveButton}
+                  onPress={() => {
+                    if (!selectedDay) return;
+
+                    const newRecord = {
+                      year,
+                      month,
+                      day: selectedDay,
+                      title,
+                      genreId: selectedGenreId,
+                    };
+
+                    setRecords([...records, newRecord]);
+                    setTitle('');
+                    setShowInput(false);
                   }}
                 >
-                  <Text
-                    style={{
-                      color: selectedGenreId === g.id ? 'white' : 'black',
-                    }}
-                  >
-                    {g.name}
-                  </Text>
+                  <Text style={{ color: 'white' }}>保存</Text>
                 </Pressable>
-              ))}
+              </>
+            )}
 
-              <Pressable
-                onPress={() => setShowAddGenre(true)}
-                style={styles.addGenreButton}
-              >
-                <Text style={{ fontWeight: '600' }}>＋</Text>
-              </Pressable>
-            </ScrollView>
+            {showAddGenre && (
+              <>
+                <Text
+                  style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 10 }}
+                >
+                  Add Genre
+                </Text>
 
-            <Pressable
-              style={styles.saveButton}
-              onPress={() => {
-                if (!selectedDay) return;
-
-                const newRecord = {
-                  year,
-                  month,
-                  day: selectedDay,
-                  title,
-                  genreId: selectedGenreId,
-                };
-
-                setRecords([...records, newRecord]);
-                setTitle('');
-                setShowInput(false);
-              }}
-            >
-              <Text style={{ color: 'white' }}>保存</Text>
-            </Pressable>
-          </View>
-        </View>
-      </Modal>
-
-      <Modal visible={showAddGenre} transparent animationType="fade">
-        <View style={styles.modalOverlay}>
-          <Pressable style={styles.genreModal} onPress={() => {}}>
-            <Text style={{ fontWeight: 'bold', marginBottom: 10 }}>
-              Add Genre
-            </Text>
-
-            <TextInput
-              placeholder="Genre name"
-              value={newGenreName}
-              onChangeText={setNewGenreName}
-              style={styles.input}
-            />
-
-            <View style={{ flexDirection: 'row', marginBottom: 10 }}>
-              {['#4CAF50', '#2196F3', '#FF9800', '#E91E63'].map((c) => (
-                <Pressable
-                  key={c}
-                  onPress={() => setNewGenreColor(c)}
-                  style={{
-                    width: 30,
-                    height: 30,
-                    borderRadius: 15,
-                    backgroundColor: c,
-                    marginRight: 10,
-                    borderWidth: newGenreColor === c ? 2 : 0,
-                  }}
+                <TextInput
+                  placeholder="Genre name"
+                  value={newGenreName}
+                  onChangeText={setNewGenreName}
+                  style={styles.input}
                 />
-              ))}
-            </View>
 
-            <Pressable
-              style={styles.saveButton}
-              onPress={() => {
-                const newGenre = {
-                  id: Date.now().toString(),
-                  name: newGenreName,
-                  color: newGenreColor,
-                };
+                <View style={{ flexDirection: 'row', marginBottom: 10 }}>
+                  {['#4CAF50', '#2196F3', '#FF9800', '#E91E63'].map((c) => (
+                    <Pressable
+                      key={c}
+                      onPress={() => setNewGenreColor(c)}
+                      style={{
+                        width: 30,
+                        height: 30,
+                        borderRadius: 15,
+                        backgroundColor: c,
+                        marginRight: 10,
+                        borderWidth: newGenreColor === c ? 2 : 0,
+                      }}
+                    />
+                  ))}
+                </View>
 
-                setGenres([...genres, newGenre]);
-                setSelectedGenreId(newGenre.id);
+                <Pressable
+                  style={styles.saveButton}
+                  onPress={() => {
+                    const newGenre = {
+                      id: Date.now().toString(),
+                      name: newGenreName,
+                      color: newGenreColor,
+                    };
 
-                setNewGenreName('');
-                setShowAddGenre(false);
-              }}
-            >
-              <Text style={{ color: 'white' }}>Save</Text>
-            </Pressable>
-          </Pressable>
+                    setGenres([...genres, newGenre]);
+                    setSelectedGenreId(newGenre.id);
+
+                    setNewGenreName('');
+                    setShowAddGenre(false);
+                  }}
+                >
+                  <Text style={{ color: 'white' }}>Save</Text>
+                </Pressable>
+
+                <Pressable
+                  style={{ marginTop: 10 }}
+                  onPress={() => setShowAddGenre(false)}
+                >
+                  <Text style={{ textAlign: 'center' }}>Back</Text>
+                </Pressable>
+              </>
+            )}
+          </View>
         </View>
       </Modal>
     </View>
