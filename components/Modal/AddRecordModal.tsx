@@ -113,11 +113,14 @@ export default function AddRecordModal({
               )}
             </View>
 
-            {!showAddGenre && (
-              <Pressable style={styles.saveButton} onPress={saveRecord}>
-                <Text style={styles.saveText}>保存</Text>
-              </Pressable>
-            )}
+            <Pressable
+              style={styles.saveButton}
+              onPress={showAddGenre ? saveGenre : saveRecord}
+            >
+              <Text style={styles.saveText}>
+                {showAddGenre ? 'ジャンル保存' : '保存'}
+              </Text>
+            </Pressable>
           </View>
         </GestureDetector>
       </View>

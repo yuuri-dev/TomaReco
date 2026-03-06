@@ -48,13 +48,9 @@ export default function AddGenreForm({
         })}
       </View>
 
-      <View style={styles.footer}>
-        <Pressable style={styles.saveButton} onPress={saveGenre}>
-          <Text style={styles.saveText}>Save</Text>
-        </Pressable>
-
+      <View style={{ marginTop: 20 }}>
         <Pressable onPress={goBack}>
-          <Text style={styles.backText}>Back</Text>
+          <Text style={{ color: '#666' }}>← 戻る</Text>
         </Pressable>
       </View>
     </>
