@@ -5,11 +5,11 @@ import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 
 export default function Home() {
-const defaultGenres = [
-  { id: 'programming', name: 'Programming', color: '#4CAF50' },
-  { id: 'reading', name: 'Reading', color: '#2196F3' },
-  { id: 'math', name: 'Math', color: '#FF9800' },
-];
+  const defaultGenres = [
+    { id: 'programming', name: 'Programming', color: '#4CAF50' },
+    { id: 'reading', name: 'Reading', color: '#2196F3' },
+    { id: 'math', name: 'Math', color: '#FF9800' },
+  ];
 
   const [records, setRecords] = useState<Record[]>([]);
 
@@ -19,6 +19,9 @@ const defaultGenres = [
   const [currentDate, setCurrentDate] = useState(new Date());
   const [genres, setGenres] = useState(defaultGenres);
   const [selectedGenreId, setSelectedGenreId] = useState(genres[0].id);
+  const [showAddGenre, setShowAddGenre] = useState(false);
+  const [newGenreName, setNewGenreName] = useState('');
+  const [newGenreColor, setNewGenreColor] = useState('#4CAF50');
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
@@ -123,11 +126,61 @@ const defaultGenres = [
       {showInput && (
         <View style={styles.inputBox}>
           <TextInput
-            placeholder="何を勉強しましたか？"
+            placeholder="記録する内容"
             value={title}
             onChangeText={setTitle}
             style={styles.input}
           />
+          {showAddGenre && (
+            <View style={styles.genreModal}>
+              <Text style={{ fontWeight: 'bold', marginBottom: 10 }}>
+                Add Genre
+              </Text>
+
+              <TextInput
+                placeholder="Genre name"
+                value={newGenreName}
+                onChangeText={setNewGenreName}
+                style={styles.input}
+              />
+
+              <View style={{ flexDirection: 'row', marginBottom: 10 }}>
+                {['#4CAF50', '#2196F3', '#FF9800', '#E91E63'].map((c) => (
+                  <Pressable
+                    key={c}
+                    onPress={() => setNewGenreColor(c)}
+                    style={{
+                      width: 30,
+                      height: 30,
+                      borderRadius: 15,
+                      backgroundColor: c,
+                      marginRight: 10,
+                      borderWidth: newGenreColor === c ? 2 : 0,
+                    }}
+                  />
+                ))}
+              </View>
+
+              <Pressable
+                style={styles.saveButton}
+                onPress={() => {
+                  const newGenre = {
+                    id: Date.now().toString(),
+                    name: newGenreName,
+                    color: newGenreColor,
+                  };
+
+                  setGenres([...genres, newGenre]);
+                  setSelectedGenreId(newGenre.id);
+
+                  setNewGenreName('');
+                  setShowAddGenre(false);
+                }}
+              >
+                <Text style={{ color: 'white' }}>Save</Text>
+              </Pressable>
+            </View>
+          )}
 
           <Text style={{ marginBottom: 5 }}>Genre</Text>
 
@@ -154,6 +207,12 @@ const defaultGenres = [
                 </Text>
               </Pressable>
             ))}
+            <Pressable
+              onPress={() => setShowAddGenre(true)}
+              style={styles.addGenreButton}
+            >
+              <Text style={{ fontWeight: '600' }}>＋</Text>
+            </Pressable>
           </View>
 
           <Pressable
@@ -227,6 +286,27 @@ const styles = StyleSheet.create({
   logTitle: {
     fontWeight: 'bold',
     marginBottom: 5,
+  },
+  addGenreButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    borderRadius: 8,
+    backgroundColor: '#ddd',
+  },
+
+  genreModal: {
+    position: 'absolute',
+    bottom: 200,
+    width: '90%',
+    backgroundColor: 'white',
+    padding: 15,
+    borderRadius: 12,
+
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+
+    elevation: 10,
   },
   addButton: {
     position: 'absolute',
