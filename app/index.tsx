@@ -5,11 +5,11 @@ import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 
 export default function Home() {
-  const defaultGenres = [
-    { id: 'programming', name: 'プログラミング' },
-    { id: 'reading', name: '読書' },
-    { id: 'math', name: '資格勉強' },
-  ];
+const defaultGenres = [
+  { id: 'programming', name: 'Programming', color: '#4CAF50' },
+  { id: 'reading', name: 'Reading', color: '#2196F3' },
+  { id: 'math', name: 'Math', color: '#FF9800' },
+];
 
   const [records, setRecords] = useState<Record[]>([]);
 
@@ -100,9 +100,18 @@ export default function Home() {
             .map((r, i) => {
               const genre = genres.find((g) => g.id === r.genreId);
               return (
-                <Text key={i}>
-                  [{genre?.name}] {r.title}
-                </Text>
+                <View key={i} style={styles.recordCard}>
+                  <View
+                    style={[
+                      styles.genreTag,
+                      { backgroundColor: genre?.color || '#ccc' },
+                    ]}
+                  >
+                    <Text style={styles.genreText}>{genre?.name}</Text>
+                  </View>
+
+                  <Text style={styles.recordTitle}>{r.title}</Text>
+                </View>
               );
             })}
         </View>
@@ -291,5 +300,35 @@ const styles = StyleSheet.create({
 
   arrow: {
     fontSize: 20,
+  },
+  recordCard: {
+    backgroundColor: 'white',
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 10,
+
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+
+    elevation: 3,
+  },
+
+  genreTag: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+    marginBottom: 6,
+  },
+
+  genreText: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: '600',
+  },
+
+  recordTitle: {
+    fontSize: 14,
   },
 });
