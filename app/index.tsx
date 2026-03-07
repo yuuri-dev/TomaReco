@@ -2,10 +2,13 @@ import Calendar from '@/components/Calendar/Calendar';
 import MonthHeader from '@/components/Calendar/MonthHeader';
 import AddRecordModal from '@/components/Modal/AddRecordModal';
 import RecordList from '@/components/Record/RecordList';
+import { Genre } from '@/type/genre';
 import { Record } from '@/type/record';
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useEffect } from 'react';
 
 export default function Home() {
   const defaultGenres = [
@@ -41,6 +44,42 @@ export default function Home() {
     newDate.setMonth(currentDate.getMonth() + diff);
     setCurrentDate(newDate);
   }
+
+  const saveData = async (records: Record[], genres: Genre[]) => {
+    try {
+      const data = {
+        records,
+        genres,
+      };
+
+      await AsyncStorage.setItem('tomato-data', JSON.stringify(data));
+    } catch (e) {
+      console.log('save error', e);
+    }
+  };
+
+  const loadData = async () => {
+    try {
+      const json = await AsyncStorage.getItem('tomato-data');
+
+      if (json !== null) {
+        const data = JSON.parse(json);
+
+        setRecords(data.records || []);
+        setGenres(data.genres || defaultGenres);
+      }
+    } catch (e) {
+      console.log('load error', e);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
+  
+  useEffect(() => {
+    saveData(records, genres);
+  }, [records, genres]);
 
   const pan = Gesture.Pan()
     .activeOffsetX([-20, 20])
