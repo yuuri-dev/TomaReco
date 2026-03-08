@@ -39,24 +39,28 @@ export default function RecordList({
     <View style={styles.log}>
       <Text style={styles.logTitle}>{selectedDay}日のログ</Text>
 
-      {dayRecords.map((r, i) => {
-        const genre = genres.find((g) => g.id === r.genreId);
+      {dayRecords.length === 0 ? (
+        <Text style={styles.emptyText}>まだ記録がありません </Text>
+      ) : (
+        dayRecords.map((r, i) => {
+          const genre = genres.find((g) => g.id === r.genreId);
 
-        return (
-          <View key={i} style={styles.recordCard}>
-            <View
-              style={[
-                styles.genreTag,
-                { backgroundColor: genre?.color || '#ccc' },
-              ]}
-            >
-              <Text style={styles.genreText}>{genre?.name}</Text>
+          return (
+            <View key={i} style={styles.recordCard}>
+              <View
+                style={[
+                  styles.genreTag,
+                  { backgroundColor: genre?.color || '#ccc' },
+                ]}
+              >
+                <Text style={styles.genreText}>{genre?.name}</Text>
+              </View>
+
+              <Text style={styles.recordTitle}>{r.title}</Text>
             </View>
-
-            <Text style={styles.recordTitle}>{r.title}</Text>
-          </View>
-        );
-      })}
+          );
+        })
+      )}
     </View>
   );
 }
@@ -98,5 +102,11 @@ const styles = StyleSheet.create({
 
   recordTitle: {
     fontSize: 14,
+  },
+
+  emptyText: {
+    textAlign: 'center',
+    color: '#999',
+    paddingVertical: 20,
   },
 });
