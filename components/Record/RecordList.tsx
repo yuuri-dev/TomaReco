@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 type Genre = {
   id: string;
@@ -20,6 +20,7 @@ type Props = {
   year: number;
   month: number;
   selectedDay: number | null;
+  deleteRecord: (r:Record) => void;
 };
 
 export default function RecordList({
@@ -28,6 +29,7 @@ export default function RecordList({
   year,
   month,
   selectedDay,
+  deleteRecord,
 }: Props) {
   if (!selectedDay) return null;
 
@@ -46,7 +48,11 @@ export default function RecordList({
           const genre = genres.find((g) => g.id === r.genreId);
 
           return (
-            <View key={i} style={styles.recordCard}>
+            <Pressable
+              key={`${r.year}-${r.month}-${r.day}-${r.title}`}
+              style={styles.recordCard}
+              onLongPress={() => deleteRecord(r)}
+            >
               <View
                 style={[
                   styles.genreTag,
@@ -57,7 +63,7 @@ export default function RecordList({
               </View>
 
               <Text style={styles.recordTitle}>{r.title}</Text>
-            </View>
+            </Pressable>
           );
         })
       )}

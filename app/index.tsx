@@ -118,6 +118,21 @@ export default function Home() {
     setShowAddGenre(false);
   }
 
+  const deleteRecord = (record: Record) => {
+    setRecords((prev) =>
+      prev.filter(
+        (r) =>
+          !(
+            r.year === record.year &&
+            r.month === record.month &&
+            r.day === record.day &&
+            r.title === record.title &&
+            r.genreId === record.genreId
+          )
+      )
+    );
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Tomato Study 🍅</Text>
@@ -141,6 +156,7 @@ export default function Home() {
         year={year}
         month={month}
         selectedDay={selectedDay}
+        deleteRecord={deleteRecord}
       />
 
       <Pressable style={styles.addButton} onPress={() => setShowInput(true)}>
