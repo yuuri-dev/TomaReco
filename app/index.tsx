@@ -5,7 +5,7 @@ import RecordList from '@/components/Record/RecordList';
 import { Genre } from '@/type/genre';
 import { Record } from '@/type/record';
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect } from 'react';
@@ -118,20 +118,32 @@ export default function Home() {
     setShowAddGenre(false);
   }
 
-  const deleteRecord = (record: Record) => {
-    setRecords((prev) =>
-      prev.filter(
-        (r) =>
-          !(
-            r.year === record.year &&
-            r.month === record.month &&
-            r.day === record.day &&
-            r.title === record.title &&
-            r.genreId === record.genreId
+const deleteRecord = (record: Record) => {
+  Alert.alert('記録を削除', 'この記録を削除しますか？', [
+    {
+      text: 'キャンセル',
+      style: 'cancel',
+    },
+    {
+      text: '削除',
+      style: 'destructive',
+      onPress: () => {
+        setRecords((prev) =>
+          prev.filter(
+            (r) =>
+              !(
+                r.year === record.year &&
+                r.month === record.month &&
+                r.day === record.day &&
+                r.title === record.title &&
+                r.genreId === record.genreId
+              )
           )
-      )
-    );
-  };
+        );
+      },
+    },
+  ]);
+};
 
   return (
     <View style={styles.container}>
