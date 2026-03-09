@@ -21,6 +21,12 @@
     ],
     "android": {
       "package": "com.anonymous.tomatostudy"
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "e6136588-90f2-47d9-8b7f-dc1b74180cf3"
+      }
     }
   }
 }
