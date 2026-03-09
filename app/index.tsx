@@ -204,7 +204,13 @@ const deleteRecord = (record: Record) => {
         deleteRecord={deleteRecord}
       />
 
-      <Pressable style={styles.addButton} onPress={() => setShowInput(true)}>
+      <Pressable
+        style={styles.addButton}
+        onPress={() => {
+          setTitle('');
+          setShowInput(true);
+        }}
+      >
         <Text style={styles.addText}>＋</Text>
       </Pressable>
 
@@ -213,6 +219,7 @@ const deleteRecord = (record: Record) => {
         close={() => {
           setShowInput(false);
           setShowAddGenre(false);
+          setTitle('');
         }}
         showAddGenre={showAddGenre}
         setShowAddGenre={setShowAddGenre}
