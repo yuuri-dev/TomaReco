@@ -12,9 +12,9 @@ import { useEffect } from 'react';
 
 export default function Home() {
   const defaultGenres = [
-    { id: 'programming', name: 'Programming', color: '#4CAF50' },
-    { id: 'reading', name: 'Reading', color: '#2196F3' },
-    { id: 'math', name: 'Math', color: '#FF9800' },
+    { id: 'programming', name: 'プログラミング', color: '#4CAF50' },
+    { id: 'reading', name: '読書', color: '#2196F3' },
+    { id: 'English', name: '英語', color: '#FF9800' },
   ];
 
   const [records, setRecords] = useState<Record[]>([]);
