@@ -92,11 +92,13 @@ export default function Home() {
   function saveRecord() {
     if (!selectedDay) return;
 
+    const genre = genres.find((g) => g.id === selectedGenreId);
+
     const newRecord = {
       year,
       month,
       day: selectedDay,
-      title,
+      title: title.trim() || genre?.name+"の学習" || '',
       genreId: selectedGenreId,
     };
 

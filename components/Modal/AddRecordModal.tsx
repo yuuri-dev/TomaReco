@@ -58,6 +58,8 @@ export default function AddRecordModal({
       }
     })
     .runOnJS(true);
+  
+  const genre = genres.find((g) => g.id === selectedGenreId);
 
   return (
     <Modal visible={visible} transparent animationType="slide">
@@ -76,7 +78,7 @@ export default function AddRecordModal({
                   <TextInput
                     value={title}
                     onChangeText={setTitle}
-                    placeholder="記録する内容"
+                    placeholder={`${genre?.name}の勉強`}
                     style={styles.input}
                   />
 
