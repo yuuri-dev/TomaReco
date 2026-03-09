@@ -2,6 +2,11 @@
   "expo": {
     "name": "tomato-study",
     "slug": "tomato-study",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ff6347"
+    },
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
