@@ -104,6 +104,7 @@ export default function Home() {
 
     setRecords([...records, newRecord]);
     setTitle('');
+    setShowAddGenre(false);
     setShowInput(false);
   }
 
@@ -179,7 +180,10 @@ const deleteRecord = (record: Record) => {
 
       <AddRecordModal
         visible={showInput}
-        close={() => setShowInput(false)}
+        close={() => {
+          setShowInput(false);
+          setShowAddGenre(false);
+        }}
         showAddGenre={showAddGenre}
         setShowAddGenre={setShowAddGenre}
         title={title}
