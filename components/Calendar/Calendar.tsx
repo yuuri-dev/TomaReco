@@ -1,17 +1,26 @@
+import { Record } from '@/type/record';
 import { StyleSheet, Text, View } from 'react-native';
-import DayCell from './Daycell';
+import DayCell from './DayCell';
 
 type Props = {
   calendarDays: ({ day: number } | null)[];
-  records: { day: number; title: string }[];
+  records: Record[];
   setSelectedDay: (day: number) => void;
+  year: number;
+  month: number; // 0〜11の月 (Date.getMonth()のまま)
+  selectedDay: number | null;
 };
 
 export default function Calendar({
   calendarDays,
   records,
   setSelectedDay,
+  year,
+  month,
+  selectedDay,
 }: Props) {
+  const today = new Date();
+
   return (
     <View style={styles.calendar}>
       <View style={styles.weekRow}>
@@ -28,13 +37,22 @@ export default function Calendar({
             return <View key={index} style={styles.day} />;
           }
 
-          const hasStudy = records.some((r) => r.day === item.day);
+          const hasStudy = records.some(
+            (r) => r.year === year && r.month === month && r.day === item.day
+          );
+
+          const isToday =
+            today.getFullYear() === year &&
+            today.getMonth() === month &&
+            today.getDate() === item.day;
 
           return (
             <DayCell
-              key={item.day}
+              key={index}
               day={item.day}
               hasStudy={hasStudy}
+              isToday={isToday}
+              isSelected={selectedDay === item.day}
               onPress={() => setSelectedDay(item.day)}
             />
           );
@@ -47,9 +65,15 @@ export default function Calendar({
 const styles = StyleSheet.create({
   calendar: {
     width: '90%',
-    backgroundColor: '#eee',
-    borderRadius: 10,
-    padding: 10,
+    backgroundColor: 'white',
+    borderRadius: 16,
+    paddingVertical: 15,
+
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+
+    elevation: 5,
   },
 
   grid: {
