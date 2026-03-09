@@ -73,8 +73,9 @@ export default function AddRecordModal({
 
               {!showAddGenre && (
                 <>
-                  <Text style={styles.title}>Add Record</Text>
+                  <Text style={styles.title}>記録を追加する</Text>
 
+                  <Text style={styles.genreLabel}>タイトル</Text>
                   <TextInput
                     value={title}
                     onChangeText={setTitle}
@@ -82,7 +83,7 @@ export default function AddRecordModal({
                     style={styles.input}
                   />
 
-                  <Text style={styles.genreLabel}>Genre</Text>
+                  <Text style={styles.genreLabel}>ジャンルを選択</Text>
 
                   <GenreSelector
                     genres={genres}
@@ -159,7 +160,8 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 12,
+    marginBottom: 20,
+    textAlign:'center',
   },
 
   input: {
@@ -167,7 +169,7 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
     padding: 12,
     borderRadius: 10,
-    marginBottom: 14,
+    marginBottom: 24,
   },
   input_label: {
     marginBottom: 4,

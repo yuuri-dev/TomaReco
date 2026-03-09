@@ -19,10 +19,10 @@ export default function AddGenreForm({
 }: Props) {
   return (
     <>
-      <Text style={styles.title}>Add Genre</Text>
+      <Text style={styles.title}>ジャンルを追加</Text>
 
       <TextInput
-        placeholder="Genre name"
+        placeholder="ジャンル名"
         value={newGenreName}
         onChangeText={setNewGenreName}
         style={styles.input}
@@ -87,7 +87,8 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 10,
+      marginBottom: 18,
+    textAlign:'center'
   },
 
   input: {

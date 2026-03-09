@@ -150,7 +150,7 @@ const deleteRecord = (record: Record) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tomato Study 🍅</Text>
+      <Text style={styles.title}>TomaReco 🍅</Text>
 
       <MonthHeader year={year} month={month} changeMonth={changeMonth} />
 
