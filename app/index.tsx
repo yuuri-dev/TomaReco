@@ -121,6 +121,32 @@ export default function Home() {
     setShowAddGenre(false);
   }
 
+  function calculateStreak(records: Record[]) {
+    const dates = records.map((r) =>
+      new Date(r.year, r.month, r.day).toDateString()
+    );
+
+    const uniqueDates = [...new Set(dates)];
+
+    let streak = 0;
+    let current = new Date();
+
+    while (true) {
+      const dateString = current.toDateString();
+
+      if (uniqueDates.includes(dateString)) {
+        streak++;
+        current.setDate(current.getDate() - 1);
+      } else {
+        break;
+      }
+    }
+
+    return streak;
+  }
+
+  const streak = calculateStreak(records);
+
 const deleteRecord = (record: Record) => {
   Alert.alert('記録を削除', 'この記録を削除しますか？', [
     {
@@ -151,6 +177,10 @@ const deleteRecord = (record: Record) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>TomaReco 🍅</Text>
+
+      <View style={styles.streakBox}>
+        <Text style={styles.streakText}>{streak} 日連続🔥</Text>
+      </View>
 
       <MonthHeader year={year} month={month} changeMonth={changeMonth} />
 
@@ -230,5 +260,13 @@ const styles = StyleSheet.create({
   addText: {
     fontSize: 30,
     color: 'white',
+  },
+  streakBox: {
+    marginBottom: 10,
+  },
+
+  streakText: {
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
