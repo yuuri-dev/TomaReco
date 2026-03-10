@@ -1,3 +1,4 @@
+import DateTimePicker from '@react-native-community/datetimepicker';
 import {
   Modal,
   Pressable,
@@ -58,7 +59,8 @@ export default function AddRecordModal({
   saveRecord,
   saveGenre,
   deleteGenre,
-  year,month
+  year,
+  month,
 }: Props) {
   const pan = Gesture.Pan()
     .onEnd((e) => {
@@ -69,6 +71,8 @@ export default function AddRecordModal({
     .runOnJS(true);
 
   const genre = genres.find((g) => g.id === selectedGenreId);
+
+  const selectedDate = new Date(year, month, selectedDay ?? 1);
 
   return (
     <Modal visible={visible} transparent animationType="slide">
@@ -85,26 +89,17 @@ export default function AddRecordModal({
                   <Text style={styles.title}>記録を追加する</Text>
 
                   <Text style={styles.input_label}>Date</Text>
-
-                  <View style={styles.dateRow}>
-                    <Pressable
-                      style={styles.dateButton}
-                      onPress={() => setSelectedDay((selectedDay ?? 1) - 1)}
-                    >
-                      <Text>−</Text>
-                    </Pressable>
-
-                    <Text style={styles.dateText}>
-                      {year}/{month + 1}/{selectedDay}
-                    </Text>
-
-                    <Pressable
-                      style={styles.dateButton}
-                      onPress={() => setSelectedDay((selectedDay ?? 1) + 1)}
-                    >
-                      <Text>＋</Text>
-                    </Pressable>
-                  </View>
+                  <DateTimePicker
+                    value={selectedDate}
+                    mode="date"
+                    display="compact"
+                    style={styles.datePicker}
+                    onChange={(event, date) => {
+                      if (date) {
+                        setSelectedDay(date.getDate());
+                      }
+                    }}
+                  />
 
                   <Text style={styles.genreLabel}>タイトル</Text>
                   <TextInput
@@ -189,23 +184,20 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
 
-  dateRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
+  dateBox: {
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 10,
+    marginBottom: 12,
   },
 
-  dateButton: {
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    backgroundColor: '#eee',
-    borderRadius: 6,
+  datePicker: {
+    marginBottom: 40,
   },
 
   dateText: {
-    marginHorizontal: 12,
     fontSize: 16,
-    fontWeight: '600',
   },
 
   title: {

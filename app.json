@@ -17,7 +17,8 @@
       "bundleIdentifier": "com.anonymous.tomato-study"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      "@react-native-community/datetimepicker"
     ],
     "android": {
       "package": "com.anonymous.tomatostudy"
