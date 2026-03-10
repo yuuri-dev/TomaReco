@@ -20,7 +20,7 @@ export default function Home() {
   const todayDay = today.getDate();
 
   const [records, setRecords] = useState<Record[]>([]);
-  const [selectedDay, setSelectedDay] = useState<number | null>(todayDay);
+  const [selectedDay, setSelectedDay] = useState<number>(todayDay);
   const [showInput, setShowInput] = useState(false);
   const [title, setTitle] = useState('');
   const [currentDate, setCurrentDate] = useState(new Date());
