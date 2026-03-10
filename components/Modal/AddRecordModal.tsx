@@ -38,6 +38,7 @@ type Props = {
   deleteGenre: (id: string) => void;
   year: number;
   month: number;
+  setCurrentDate: (d: Date) => void;
 };
 
 export default function AddRecordModal({
@@ -61,6 +62,7 @@ export default function AddRecordModal({
   deleteGenre,
   year,
   month,
+  setCurrentDate,
 }: Props) {
   const pan = Gesture.Pan()
     .onEnd((e) => {
@@ -95,9 +97,10 @@ export default function AddRecordModal({
                     display="compact"
                     style={styles.datePicker}
                     onChange={(event, date) => {
-                      if (date) {
-                        setSelectedDay(date.getDate());
-                      }
+                      if (!date) return;
+
+                      setSelectedDay(date.getDate());
+                      setCurrentDate(date);
                     }}
                   />
 

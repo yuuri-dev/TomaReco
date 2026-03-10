@@ -254,6 +254,7 @@ export default function Home() {
         deleteGenre={deleteGenre}
         year={year}
         month={month}
+        setCurrentDate={setCurrentDate}
       />
     </View>
   );
