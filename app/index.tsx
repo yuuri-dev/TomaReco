@@ -124,6 +124,19 @@ export default function Home() {
     setShowAddGenre(false);
   }
 
+  function deleteGenre(id: string) {
+    Alert.alert('ジャンル削除', '削除しますか？', [
+      { text: 'キャンセル', style: 'cancel' },
+      {
+        text: '削除',
+        style: 'destructive',
+        onPress: () => {
+          setGenres((prev) => prev.filter((g) => g.id !== id));
+        },
+      },
+    ]);
+  }
+
   function calculateStreak(records: Record[]) {
     const dates = records.map((r) =>
       new Date(r.year, r.month, r.day).toDateString()
@@ -237,6 +250,7 @@ const deleteRecord = (record: Record) => {
         setNewGenreColor={setNewGenreColor}
         saveRecord={saveRecord}
         saveGenre={saveGenre}
+        deleteGenre={deleteGenre}
       />
     </View>
   );

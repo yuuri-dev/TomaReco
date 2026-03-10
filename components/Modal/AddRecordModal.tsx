@@ -32,6 +32,7 @@ type Props = {
   setNewGenreColor: (v: string) => void;
   saveRecord: () => void;
   saveGenre: () => void;
+  deleteGenre: (id: string) => void;
 };
 
 export default function AddRecordModal({
@@ -50,6 +51,7 @@ export default function AddRecordModal({
   setNewGenreColor,
   saveRecord,
   saveGenre,
+  deleteGenre
 }: Props) {
   const pan = Gesture.Pan()
     .onEnd((e) => {
@@ -58,7 +60,7 @@ export default function AddRecordModal({
       }
     })
     .runOnJS(true);
-  
+
   const genre = genres.find((g) => g.id === selectedGenreId);
 
   return (
@@ -89,6 +91,7 @@ export default function AddRecordModal({
                     genres={genres}
                     selectedGenreId={selectedGenreId}
                     setSelectedGenreId={setSelectedGenreId}
+                    deleteGenre={deleteGenre}
                   />
                   <View style={styles.addGenreRow}>
                     <Pressable
@@ -161,7 +164,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 20,
-    textAlign:'center',
+    textAlign: 'center',
   },
 
   input: {

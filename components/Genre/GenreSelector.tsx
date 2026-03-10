@@ -10,12 +10,14 @@ type Props = {
   genres: Genre[];
   selectedGenreId: string;
   setSelectedGenreId: (id: string) => void;
+  deleteGenre: (id: string) => void;
 };
 
 export default function GenreSelector({
   genres,
   selectedGenreId,
   setSelectedGenreId,
+  deleteGenre,
 }: Props) {
   return (
     <ScrollView
@@ -30,6 +32,7 @@ export default function GenreSelector({
           <Pressable
             key={g.id}
             onPress={() => setSelectedGenreId(g.id)}
+            onLongPress={() => deleteGenre(g.id)}
             style={[styles.genre, selected && { backgroundColor: g.color }]}
           >
             <View
