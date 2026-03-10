@@ -4,11 +4,10 @@ import AddRecordModal from '@/components/Modal/AddRecordModal';
 import RecordList from '@/components/Record/RecordList';
 import { Genre } from '@/type/genre';
 import { Record } from '@/type/record';
-import { useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useEffect, useState } from 'react';
 import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useEffect } from 'react';
 
 export default function Home() {
   const defaultGenres = [
@@ -79,7 +78,7 @@ export default function Home() {
   useEffect(() => {
     loadData();
   }, []);
-  
+
   useEffect(() => {
     saveData(records, genres);
   }, [records, genres]);
@@ -101,7 +100,7 @@ export default function Home() {
       year,
       month,
       day: selectedDay,
-      title: title.trim() || genre?.name+"の学習" || '',
+      title: title.trim() || (genre ? `${genre.name}の学習` : '学習'),
       genreId: selectedGenreId,
     };
 
@@ -163,32 +162,32 @@ export default function Home() {
 
   const streak = calculateStreak(records);
 
-const deleteRecord = (record: Record) => {
-  Alert.alert('記録を削除', 'この記録を削除しますか？', [
-    {
-      text: 'キャンセル',
-      style: 'cancel',
-    },
-    {
-      text: '削除',
-      style: 'destructive',
-      onPress: () => {
-        setRecords((prev) =>
-          prev.filter(
-            (r) =>
-              !(
-                r.year === record.year &&
-                r.month === record.month &&
-                r.day === record.day &&
-                r.title === record.title &&
-                r.genreId === record.genreId
-              )
-          )
-        );
+  const deleteRecord = (record: Record) => {
+    Alert.alert('記録を削除', 'この記録を削除しますか？', [
+      {
+        text: 'キャンセル',
+        style: 'cancel',
       },
-    },
-  ]);
-};
+      {
+        text: '削除',
+        style: 'destructive',
+        onPress: () => {
+          setRecords((prev) =>
+            prev.filter(
+              (r) =>
+                !(
+                  r.year === record.year &&
+                  r.month === record.month &&
+                  r.day === record.day &&
+                  r.title === record.title &&
+                  r.genreId === record.genreId
+                )
+            )
+          );
+        },
+      },
+    ]);
+  };
 
   return (
     <View style={styles.container}>
