@@ -17,8 +17,11 @@ export default function Home() {
     { id: 'English', name: '英語', color: '#FF9800' },
   ];
 
+  const today = new Date();
+  const todayDay = today.getDate();
+
   const [records, setRecords] = useState<Record[]>([]);
-  const [selectedDay, setSelectedDay] = useState<number | null>(null);
+  const [selectedDay, setSelectedDay] = useState<number | null>(todayDay);
   const [showInput, setShowInput] = useState(false);
   const [title, setTitle] = useState('');
   const [currentDate, setCurrentDate] = useState(new Date());
