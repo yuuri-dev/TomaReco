@@ -243,6 +243,8 @@ export default function Home() {
         genres={genres}
         selectedGenreId={selectedGenreId}
         setSelectedGenreId={setSelectedGenreId}
+        selectedDay={selectedDay}
+        setSelectedDay={setSelectedDay}
         newGenreName={newGenreName}
         setNewGenreName={setNewGenreName}
         newGenreColor={newGenreColor}
@@ -250,6 +252,8 @@ export default function Home() {
         saveRecord={saveRecord}
         saveGenre={saveGenre}
         deleteGenre={deleteGenre}
+        year={year}
+        month={month}
       />
     </View>
   );

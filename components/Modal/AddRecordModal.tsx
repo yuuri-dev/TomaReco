@@ -26,6 +26,8 @@ type Props = {
   genres: Genre[];
   selectedGenreId: string;
   setSelectedGenreId: (id: string) => void;
+  selectedDay: number;
+  setSelectedDay: (date: number) => void;
   newGenreName: string;
   setNewGenreName: (v: string) => void;
   newGenreColor: string;
@@ -33,6 +35,8 @@ type Props = {
   saveRecord: () => void;
   saveGenre: () => void;
   deleteGenre: (id: string) => void;
+  year: number;
+  month: number;
 };
 
 export default function AddRecordModal({
@@ -45,13 +49,16 @@ export default function AddRecordModal({
   genres,
   selectedGenreId,
   setSelectedGenreId,
+  selectedDay,
+  setSelectedDay,
   newGenreName,
   setNewGenreName,
   newGenreColor,
   setNewGenreColor,
   saveRecord,
   saveGenre,
-  deleteGenre
+  deleteGenre,
+  year,month
 }: Props) {
   const pan = Gesture.Pan()
     .onEnd((e) => {
@@ -76,6 +83,28 @@ export default function AddRecordModal({
               {!showAddGenre && (
                 <>
                   <Text style={styles.title}>記録を追加する</Text>
+
+                  <Text style={styles.input_label}>Date</Text>
+
+                  <View style={styles.dateRow}>
+                    <Pressable
+                      style={styles.dateButton}
+                      onPress={() => setSelectedDay((selectedDay ?? 1) - 1)}
+                    >
+                      <Text>−</Text>
+                    </Pressable>
+
+                    <Text style={styles.dateText}>
+                      {year}/{month + 1}/{selectedDay}
+                    </Text>
+
+                    <Pressable
+                      style={styles.dateButton}
+                      onPress={() => setSelectedDay((selectedDay ?? 1) + 1)}
+                    >
+                      <Text>＋</Text>
+                    </Pressable>
+                  </View>
 
                   <Text style={styles.genreLabel}>タイトル</Text>
                   <TextInput
@@ -158,6 +187,25 @@ const styles = StyleSheet.create({
     backgroundColor: '#ccc',
     alignSelf: 'center',
     marginBottom: 15,
+  },
+
+  dateRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+
+  dateButton: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    backgroundColor: '#eee',
+    borderRadius: 6,
+  },
+
+  dateText: {
+    marginHorizontal: 12,
+    fontSize: 16,
+    fontWeight: '600',
   },
 
   title: {
