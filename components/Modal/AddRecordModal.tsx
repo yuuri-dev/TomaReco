@@ -81,7 +81,7 @@ export default function AddRecordModal({
                   <TextInput
                     value={title}
                     onChangeText={setTitle}
-                    placeholder={`${genre?.name}の勉強`}
+                    placeholder={`${genre?.name ?? '例) 英語'}の勉強`}
                     style={styles.input}
                   />
 
