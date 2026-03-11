@@ -1,6 +1,7 @@
-import { useState } from 'react';
-import { View, Text, Pressable, StyleSheet, Modal } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
+import { useState } from 'react';
+import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 type Props = {
   year: number;
@@ -30,11 +31,18 @@ export default function MonthHeader({ year, month, changeMonth }: Props) {
 
   return (
     <View style={styles.monthHeader}>
-      <Pressable onPress={() => changeMonth(-1)}>
-        <Text style={styles.arrow}>◀</Text>
+      <Pressable
+        style={({ pressed }) => [
+          styles.arrowButton,
+          pressed && { opacity: 0.6 },
+        ]}
+        onPress={() => changeMonth(-1)}
+      >
+        <Ionicons name="chevron-back" size={22} color="#333" />
       </Pressable>
 
       <Pressable
+        style={styles.monthContainer}
         onPress={() => {
           setTempMonth(month);
           setTempYear(year);
@@ -46,8 +54,14 @@ export default function MonthHeader({ year, month, changeMonth }: Props) {
         </Text>
       </Pressable>
 
-      <Pressable onPress={() => changeMonth(1)}>
-        <Text style={styles.arrow}>▶</Text>
+      <Pressable
+        style={({ pressed }) => [
+          styles.arrowButton,
+          pressed && { opacity: 0.6 },
+        ]}
+        onPress={() => changeMonth(1)}
+      >
+        <Ionicons name="chevron-forward" size={22} color="#333" />
       </Pressable>
 
       <Modal visible={showMonthPicker} transparent animationType="fade">
@@ -100,21 +114,6 @@ export default function MonthHeader({ year, month, changeMonth }: Props) {
 }
 
 const styles = StyleSheet.create({
-  monthHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-
-  monthText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginHorizontal: 20,
-  },
-
-  arrow: {
-    fontSize: 20,
-  },
 
   modalOverlay: {
     flex: 1,
@@ -149,6 +148,38 @@ const styles = StyleSheet.create({
 
   selectText: {
     color: 'white',
+    fontWeight: '600',
+  },
+
+  monthHeader: {
+    width: '90%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+  },
+
+  monthContainer: {
+    flex: 1,
+    alignItems: 'center',
+  },
+
+  monthText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+
+  arrowButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 10,
+    backgroundColor: '#f3f3f3',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  arrow: {
+    fontSize: 22,
     fontWeight: '600',
   },
 });
