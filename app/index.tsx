@@ -47,6 +47,12 @@ export default function Home() {
     setCurrentDate(newDate);
   }
 
+  function goToday() {
+    const today = new Date();
+    setCurrentDate(today);
+    setSelectedDay(today.getDate());
+  }
+
   const saveData = async (records: Record[], genres: Genre[]) => {
     try {
       const data = {
@@ -191,12 +197,16 @@ export default function Home() {
 
   return (
     <View style={styles.container}>
-
       <View style={styles.streakBox}>
         <Text style={styles.streakText}>{streak} 日連続🔥</Text>
       </View>
 
-      <MonthHeader year={year} month={month} changeMonth={changeMonth} />
+      <MonthHeader
+        year={year}
+        month={month}
+        changeMonth={changeMonth}
+        goToday={goToday}
+      />
 
       <GestureDetector gesture={pan}>
         <Calendar

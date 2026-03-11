@@ -7,9 +7,10 @@ type Props = {
   year: number;
   month: number;
   changeMonth: (diff: number) => void;
+  goToday: () => void;
 };
 
-export default function MonthHeader({ year, month, changeMonth }: Props) {
+export default function MonthHeader({ year, month, changeMonth,goToday }: Props) {
   const monthNames = [
     'January',
     'February',
@@ -64,6 +65,11 @@ export default function MonthHeader({ year, month, changeMonth }: Props) {
         <Ionicons name="chevron-forward" size={22} color="#333" />
       </Pressable>
 
+      {/* 今日ボタン */}
+      <Pressable style={styles.todayButton} onPress={goToday}>
+        <Text style={styles.todayText}>Today</Text>
+      </Pressable>
+
       <Modal visible={showMonthPicker} transparent animationType="fade">
         <View style={styles.modalOverlay}>
           {/* 背景タップで閉じる */}
@@ -114,7 +120,6 @@ export default function MonthHeader({ year, month, changeMonth }: Props) {
 }
 
 const styles = StyleSheet.create({
-
   modalOverlay: {
     flex: 1,
     justifyContent: 'center',
@@ -181,5 +186,18 @@ const styles = StyleSheet.create({
   arrow: {
     fontSize: 22,
     fontWeight: '600',
+  },
+  todayButton: {
+    marginLeft: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 8,
+    backgroundColor: '#ff6347',
+  },
+
+  todayText: {
+    color: 'white',
+    fontWeight: '600',
+    fontSize: 12,
   },
 });
