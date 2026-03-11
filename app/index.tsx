@@ -191,7 +191,6 @@ export default function Home() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>TomaReco 🍅</Text>
 
       <View style={styles.streakBox}>
         <Text style={styles.streakText}>{streak} 日連続🔥</Text>
@@ -265,12 +264,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 80,
     alignItems: 'center',
-  },
-
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 30,
   },
 
   addButton: {
