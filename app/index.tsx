@@ -4,11 +4,10 @@ import AddRecordModal from '@/components/Modal/AddRecordModal';
 import RecordList from '@/components/Record/RecordList';
 import { Genre } from '@/type/genre';
 import { Record } from '@/type/record';
-import { useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useEffect, useState } from 'react';
 import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useEffect } from 'react';
 
 export default function Home() {
   const defaultGenres = [
@@ -17,8 +16,11 @@ export default function Home() {
     { id: 'English', name: '英語', color: '#FF9800' },
   ];
 
+  const today = new Date();
+  const todayDay = today.getDate();
+
   const [records, setRecords] = useState<Record[]>([]);
-  const [selectedDay, setSelectedDay] = useState<number | null>(null);
+  const [selectedDay, setSelectedDay] = useState<number>(todayDay);
   const [showInput, setShowInput] = useState(false);
   const [title, setTitle] = useState('');
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -43,6 +45,12 @@ export default function Home() {
     const newDate = new Date(currentDate);
     newDate.setMonth(currentDate.getMonth() + diff);
     setCurrentDate(newDate);
+  }
+
+  function goToday() {
+    const today = new Date();
+    setCurrentDate(today);
+    setSelectedDay(today.getDate());
   }
 
   const saveData = async (records: Record[], genres: Genre[]) => {
@@ -76,7 +84,7 @@ export default function Home() {
   useEffect(() => {
     loadData();
   }, []);
-  
+
   useEffect(() => {
     saveData(records, genres);
   }, [records, genres]);
@@ -98,7 +106,7 @@ export default function Home() {
       year,
       month,
       day: selectedDay,
-      title: title.trim() || genre?.name+"の学習" || '',
+      title: title.trim() || (genre ? `${genre.name}の学習` : '学習'),
       genreId: selectedGenreId,
     };
 
@@ -119,6 +127,19 @@ export default function Home() {
     setSelectedGenreId(newGenre.id);
     setNewGenreName('');
     setShowAddGenre(false);
+  }
+
+  function deleteGenre(id: string) {
+    Alert.alert('ジャンル削除', '削除しますか？', [
+      { text: 'キャンセル', style: 'cancel' },
+      {
+        text: '削除',
+        style: 'destructive',
+        onPress: () => {
+          setGenres((prev) => prev.filter((g) => g.id !== id));
+        },
+      },
+    ]);
   }
 
   function calculateStreak(records: Record[]) {
@@ -147,42 +168,45 @@ export default function Home() {
 
   const streak = calculateStreak(records);
 
-const deleteRecord = (record: Record) => {
-  Alert.alert('記録を削除', 'この記録を削除しますか？', [
-    {
-      text: 'キャンセル',
-      style: 'cancel',
-    },
-    {
-      text: '削除',
-      style: 'destructive',
-      onPress: () => {
-        setRecords((prev) =>
-          prev.filter(
-            (r) =>
-              !(
-                r.year === record.year &&
-                r.month === record.month &&
-                r.day === record.day &&
-                r.title === record.title &&
-                r.genreId === record.genreId
-              )
-          )
-        );
+  const deleteRecord = (record: Record) => {
+    Alert.alert('記録を削除', 'この記録を削除しますか？', [
+      {
+        text: 'キャンセル',
+        style: 'cancel',
       },
-    },
-  ]);
-};
+      {
+        text: '削除',
+        style: 'destructive',
+        onPress: () => {
+          setRecords((prev) =>
+            prev.filter(
+              (r) =>
+                !(
+                  r.year === record.year &&
+                  r.month === record.month &&
+                  r.day === record.day &&
+                  r.title === record.title &&
+                  r.genreId === record.genreId
+                )
+            )
+          );
+        },
+      },
+    ]);
+  };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>TomaReco 🍅</Text>
-
       <View style={styles.streakBox}>
         <Text style={styles.streakText}>{streak} 日連続🔥</Text>
       </View>
 
-      <MonthHeader year={year} month={month} changeMonth={changeMonth} />
+      <MonthHeader
+        year={year}
+        month={month}
+        changeMonth={changeMonth}
+        goToday={goToday}
+      />
 
       <GestureDetector gesture={pan}>
         <Calendar
@@ -228,12 +252,18 @@ const deleteRecord = (record: Record) => {
         genres={genres}
         selectedGenreId={selectedGenreId}
         setSelectedGenreId={setSelectedGenreId}
+        selectedDay={selectedDay}
+        setSelectedDay={setSelectedDay}
         newGenreName={newGenreName}
         setNewGenreName={setNewGenreName}
         newGenreColor={newGenreColor}
         setNewGenreColor={setNewGenreColor}
         saveRecord={saveRecord}
         saveGenre={saveGenre}
+        deleteGenre={deleteGenre}
+        year={year}
+        month={month}
+        setCurrentDate={setCurrentDate}
       />
     </View>
   );
@@ -242,14 +272,8 @@ const deleteRecord = (record: Record) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 80,
+    paddingTop: 20,
     alignItems: 'center',
-  },
-
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 30,
   },
 
   addButton: {

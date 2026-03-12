@@ -39,7 +39,7 @@ export default function RecordList({
 
   return (
     <View style={styles.log}>
-      <Text style={styles.logTitle}>{selectedDay}日のログ</Text>
+      <Text style={styles.logTitle}>{year}年{month+1}月{selectedDay}日の学習</Text>
 
       {dayRecords.length === 0 ? (
         <Text style={styles.emptyText}>まだ記録がありません </Text>
