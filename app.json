@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "tomato-study",
+    "name": "TomaReco",
     "slug": "tomato-study",
     "icon": "./assets/images/icon.png",
     "splash": {
@@ -10,11 +10,14 @@
     },
     "version": "1.0.0",
     "orientation": "portrait",
-    "scheme": "tomatostudy",
+    "scheme": "tomareco",
     "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.tomato-study"
+      "bundleIdentifier": "com.tomareco.app",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "plugins": [
       "expo-router",
