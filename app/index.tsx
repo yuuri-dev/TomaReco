@@ -53,52 +53,47 @@ export default function Home() {
     setSelectedDay(today.getDate());
   }
 
-  const saveData = async (records: Record[], genres: Genre[]) => {
-    try {
-      const data = {
-        records,
-        genres,
-      };
-
-      await AsyncStorage.setItem('tomato-data', JSON.stringify(data));
-    } catch (e) {
-      console.log('save error', e);
-    }
-  };
-
-  const loadData = async () => {
-    try {
-      const json = await AsyncStorage.getItem('tomato-data');
-
-      if (json !== null) {
-        const data = JSON.parse(json);
-
-        type PersistedRecord = Omit<Record, 'id'> & { id?: string };
-        const loadedRecords: Record[] = (data.records || []).map(
-          (r: PersistedRecord): Record => ({
-            id: r.id ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`,
-            year: r.year,
-            month: r.month,
-            day: r.day,
-            title: r.title,
-            genreId: r.genreId,
-          })
-        );
-
-        setRecords(loadedRecords);
-        setGenres(data.genres || defaultGenres);
-      }
-    } catch (e) {
-      console.log('load error', e);
-    }
-  };
-
   useEffect(() => {
-    loadData();
+    const load = async () => {
+      try {
+        const json = await AsyncStorage.getItem('tomato-data');
+
+        if (json !== null) {
+          const data = JSON.parse(json);
+
+          type PersistedRecord = Omit<Record, 'id'> & { id?: string };
+          const loadedRecords: Record[] = (data.records || []).map(
+            (r: PersistedRecord): Record => ({
+              id: r.id ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+              year: r.year,
+              month: r.month,
+              day: r.day,
+              title: r.title,
+              genreId: r.genreId,
+            })
+          );
+
+          setRecords(loadedRecords);
+          setGenres(data.genres || defaultGenres);
+        }
+      } catch {
+        Alert.alert('エラー', 'データの読み込みに失敗しました');
+      }
+    };
+
+    load();
   }, []);
 
   useEffect(() => {
-    saveData(records, genres);
+    const save = async () => {
+      try {
+        await AsyncStorage.setItem('tomato-data', JSON.stringify({ records, genres }));
+      } catch {
+        Alert.alert('エラー', 'データの保存に失敗しました');
+      }
+    };
+
+    save();
   }, [records, genres]);
 
   const pan = Gesture.Pan()
