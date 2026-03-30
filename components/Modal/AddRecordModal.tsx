@@ -1,5 +1,7 @@
 import { useAppContext } from '@/context/AppContext';
+import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { useState } from 'react';
 import {
   Modal,
   Pressable,
@@ -9,7 +11,6 @@ import {
   View,
 } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import { useState } from 'react';
 import AddGenreForm from '../Genre/AddGenreForm';
 import GenreSelector from '../Genre/GenreSelector';
 
@@ -34,17 +35,15 @@ export default function AddRecordModal({ visible, close }: Props) {
   const [showAddGenre, setShowAddGenre] = useState(false);
   const [title, setTitle] = useState('');
   const [newGenreName, setNewGenreName] = useState('');
-  const [newGenreColor, setNewGenreColor] = useState('#4CAF50');
+  const [newGenreColor, setNewGenreColor] = useState('#ff6347');
+
   const pan = Gesture.Pan()
     .onEnd((e) => {
-      if (e.translationY > 80) {
-        close();
-      }
+      if (e.translationY > 80) close();
     })
     .runOnJS(true);
 
   const genre = genres.find((g) => g.id === selectedGenreId);
-
   const selectedDate = new Date(year, month, selectedDay ?? 1);
 
   return (
@@ -54,81 +53,73 @@ export default function AddRecordModal({ visible, close }: Props) {
 
         <GestureDetector gesture={pan}>
           <View style={styles.sheet}>
-            <View style={styles.topContent}>
-              <View style={styles.dragBar} />
+            <View style={styles.dragBar} />
 
-              {!showAddGenre && (
-                <>
-                  <Text style={styles.title}>記録を追加する</Text>
+            {!showAddGenre ? (
+              <>
+                <Text style={styles.sheetTitle}>記録を追加</Text>
 
-                  <Text style={styles.input_label}>Date</Text>
+                <Text style={styles.label}>日付</Text>
+                <View style={styles.dateRow}>
+                  <Ionicons name="calendar-outline" size={18} color="#aaa" />
                   <DateTimePicker
                     value={selectedDate}
                     mode="date"
                     display="compact"
-                    style={styles.datePicker}
-                    onChange={(event, date) => {
+                    onChange={(_, date) => {
                       if (!date) return;
-
                       setSelectedDay(date.getDate());
                       setCurrentDate(date);
                     }}
                   />
+                </View>
 
-                  <Text style={styles.genreLabel}>タイトル</Text>
-                  <TextInput
-                    value={title}
-                    onChangeText={setTitle}
-                    placeholder={`${genre?.name ?? '例) 英語'}の勉強`}
-                    style={styles.input}
-                  />
-
-                  <Text style={styles.genreLabel}>ジャンルを選択</Text>
-
-                  <GenreSelector />
-                  <View style={styles.addGenreRow}>
-                    <Pressable
-                      style={({ pressed }) => [
-                        styles.addGenreButton,
-                        pressed && styles.addGenrePressed,
-                      ]}
-                      onPress={() => setShowAddGenre(true)}
-                    >
-                      <Text style={styles.addGenreText}>＋ 新しいジャンル</Text>
-                    </Pressable>
-                  </View>
-                </>
-              )}
-
-              {showAddGenre && (
-                <AddGenreForm
-                  newGenreName={newGenreName}
-                  setNewGenreName={setNewGenreName}
-                  newGenreColor={newGenreColor}
-                  setNewGenreColor={setNewGenreColor}
-                  goBack={() => setShowAddGenre(false)}
+                <Text style={styles.label}>タイトル</Text>
+                <TextInput
+                  value={title}
+                  onChangeText={setTitle}
+                  placeholder={`${genre?.name ?? '英語'}の勉強`}
+                  placeholderTextColor="#bbb"
+                  style={styles.input}
                 />
-              )}
-            </View>
 
-            <Pressable
-              style={styles.saveButton}
-              onPress={() => {
-                if (showAddGenre) {
+                <Text style={styles.label}>ジャンル</Text>
+                <GenreSelector />
+
+                <Pressable
+                  style={styles.addGenreChip}
+                  onPress={() => setShowAddGenre(true)}
+                >
+                  <Ionicons name="add" size={15} color="#888" />
+                  <Text style={styles.addGenreText}>新しいジャンル</Text>
+                </Pressable>
+
+                <Pressable
+                  style={styles.saveButton}
+                  onPress={() => {
+                    saveRecord(title);
+                    setTitle('');
+                    close();
+                  }}
+                >
+                  <Text style={styles.saveText}>保存する</Text>
+                </Pressable>
+              </>
+            ) : (
+              <AddGenreForm
+                newGenreName={newGenreName}
+                setNewGenreName={setNewGenreName}
+                newGenreColor={newGenreColor}
+                setNewGenreColor={setNewGenreColor}
+                goBack={() => setShowAddGenre(false)}
+                onSave={() => {
                   saveGenre(newGenreName, newGenreColor);
                   setNewGenreName('');
+                  setNewGenreColor('#ff6347');
                   setShowAddGenre(false);
-                } else {
-                  saveRecord(title);
-                  setTitle('');
-                  close();
-                }
-              }}
-            >
-              <Text style={styles.saveText}>
-                {showAddGenre ? 'ジャンル保存' : '保存'}
-              </Text>
-            </Pressable>
+                }}
+              />
+            )}
           </View>
         </GestureDetector>
       </View>
@@ -139,107 +130,95 @@ export default function AddRecordModal({ visible, close }: Props) {
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.35)',
+    backgroundColor: 'rgba(0,0,0,0.4)',
     justifyContent: 'flex-end',
   },
-  topContent: {
-    justifyContent: 'flex-start',
-  },
+
   sheet: {
-    height: '80%',
     backgroundColor: 'white',
-    padding: 20,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    paddingHorizontal: 24,
+    paddingBottom: 40,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
   },
 
   dragBar: {
-    width: 40,
-    height: 5,
-    borderRadius: 3,
-    backgroundColor: '#ccc',
+    width: 36,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: '#ddd',
     alignSelf: 'center',
-    marginBottom: 15,
-  },
-
-  dateBox: {
-    padding: 12,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 10,
-    marginBottom: 12,
-  },
-
-  datePicker: {
-    marginBottom: 40,
-  },
-
-  dateText: {
-    fontSize: 16,
-  },
-
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    marginTop: 12,
     marginBottom: 20,
-    textAlign: 'center',
+  },
+
+  sheetTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#1a1a1a',
+    marginBottom: 24,
+  },
+
+  label: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#aaa',
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
+    marginBottom: 8,
+  },
+
+  dateRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 2,
+    marginBottom: 20,
+    gap: 8,
   },
 
   input: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    padding: 12,
-    borderRadius: 10,
-    marginBottom: 24,
-  },
-  input_label: {
-    marginBottom: 4,
-    fontWeight: '600',
+    backgroundColor: '#f5f5f5',
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    fontSize: 15,
+    color: '#1a1a1a',
+    marginBottom: 20,
   },
 
-  genreLabel: {
-    marginBottom: 8,
-    fontWeight: '600',
-  },
-
-  saveButton: {
-    position: 'absolute',
-    bottom: 30,
-    left: 20,
-    right: 20,
-
-    backgroundColor: '#ff6347',
-    padding: 14,
-    borderRadius: 10,
+  addGenreChip: {
+    flexDirection: 'row',
     alignItems: 'center',
-  },
-
-  saveText: {
-    color: 'white',
-    fontWeight: '600',
-  },
-
-  addGenreRow: {
-    alignItems: 'flex-end',
-    marginTop: 8,
-  },
-
-  addGenreButton: {
-    backgroundColor: '#f3f3f3',
-    borderWidth: 1,
-    borderColor: '#e2e2e2',
+    alignSelf: 'flex-start',
+    marginTop: 10,
+    paddingHorizontal: 12,
     paddingVertical: 6,
-    paddingHorizontal: 10,
-    borderRadius: 6,
-  },
-
-  addGenrePressed: {
-    opacity: 0.6,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+    gap: 4,
   },
 
   addGenreText: {
     fontSize: 12,
-    color: '#444',
+    color: '#888',
     fontWeight: '500',
+  },
+
+  saveButton: {
+    backgroundColor: '#ff6347',
+    borderRadius: 14,
+    paddingVertical: 15,
+    alignItems: 'center',
+    marginTop: 24,
+  },
+
+  saveText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '700',
   },
 });
