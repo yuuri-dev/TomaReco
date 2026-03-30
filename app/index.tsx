@@ -73,7 +73,19 @@ export default function Home() {
       if (json !== null) {
         const data = JSON.parse(json);
 
-        setRecords(data.records || []);
+        type PersistedRecord = Omit<Record, 'id'> & { id?: string };
+        const loadedRecords: Record[] = (data.records || []).map(
+          (r: PersistedRecord): Record => ({
+            id: r.id ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+            year: r.year,
+            month: r.month,
+            day: r.day,
+            title: r.title,
+            genreId: r.genreId,
+          })
+        );
+
+        setRecords(loadedRecords);
         setGenres(data.genres || defaultGenres);
       }
     } catch (e) {
@@ -102,7 +114,8 @@ export default function Home() {
 
     const genre = genres.find((g) => g.id === selectedGenreId);
 
-    const newRecord = {
+    const newRecord: Record = {
+      id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
       year,
       month,
       day: selectedDay,
@@ -178,18 +191,7 @@ export default function Home() {
         text: '削除',
         style: 'destructive',
         onPress: () => {
-          setRecords((prev) =>
-            prev.filter(
-              (r) =>
-                !(
-                  r.year === record.year &&
-                  r.month === record.month &&
-                  r.day === record.day &&
-                  r.title === record.title &&
-                  r.genreId === record.genreId
-                )
-            )
-          );
+          setRecords((prev) => prev.filter((r) => r.id !== record.id));
         },
       },
     ]);

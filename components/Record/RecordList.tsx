@@ -7,6 +7,7 @@ type Genre = {
 };
 
 type Record = {
+  id: string;
   year: number;
   month: number;
   day: number;
@@ -44,12 +45,12 @@ export default function RecordList({
       {dayRecords.length === 0 ? (
         <Text style={styles.emptyText}>まだ記録がありません </Text>
       ) : (
-        dayRecords.map((r, i) => {
+        dayRecords.map((r) => {
           const genre = genres.find((g) => g.id === r.genreId);
 
           return (
             <Pressable
-              key={`${r.year}-${r.month}-${r.day}-${r.title}`}
+              key={r.id}
               style={styles.recordCard}
               onLongPress={() => deleteRecord(r)}
             >
