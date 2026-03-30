@@ -5,7 +5,7 @@ import RecordList from '@/components/Record/RecordList';
 import { Record } from '@/type/record';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 
 export default function Home() {
@@ -17,6 +17,8 @@ export default function Home() {
 
   const today = new Date();
   const todayDay = today.getDate();
+
+  const [isLoading, setIsLoading] = useState(true);
 
   const [records, setRecords] = useState<Record[]>([]);
   const [selectedDay, setSelectedDay] = useState<number>(todayDay);
@@ -77,6 +79,8 @@ export default function Home() {
         }
       } catch {
         Alert.alert('エラー', 'データの読み込みに失敗しました');
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -84,6 +88,8 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    if (isLoading) return;
+
     const save = async () => {
       try {
         await AsyncStorage.setItem('tomato-data', JSON.stringify({ records, genres }));
@@ -93,7 +99,7 @@ export default function Home() {
     };
 
     save();
-  }, [records, genres]);
+  }, [records, genres, isLoading]);
 
   const pan = Gesture.Pan()
     .activeOffsetX([-20, 20])
@@ -190,6 +196,14 @@ export default function Home() {
       },
     ]);
   };
+
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#ff6347" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -295,5 +309,11 @@ const styles = StyleSheet.create({
   streakText: {
     fontSize: 16,
     fontWeight: '600',
+  },
+
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
