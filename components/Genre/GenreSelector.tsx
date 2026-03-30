@@ -1,19 +1,8 @@
-import { Genre } from '@/type/genre';
+import { useAppContext } from '@/context/AppContext';
 import { ScrollView, Pressable, Text, View, StyleSheet } from 'react-native';
 
-type Props = {
-  genres: Genre[];
-  selectedGenreId: string;
-  setSelectedGenreId: (id: string) => void;
-  deleteGenre: (id: string) => void;
-};
-
-export default function GenreSelector({
-  genres,
-  selectedGenreId,
-  setSelectedGenreId,
-  deleteGenre,
-}: Props) {
+export default function GenreSelector() {
+  const { genres, selectedGenreId, setSelectedGenreId, deleteGenre } = useAppContext();
   return (
     <ScrollView
       horizontal

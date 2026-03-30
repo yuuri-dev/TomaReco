@@ -1,4 +1,4 @@
-import { Genre } from '@/type/genre';
+import { useAppContext } from '@/context/AppContext';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {
   Modal,
@@ -9,56 +9,32 @@ import {
   View,
 } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import { useState } from 'react';
 import AddGenreForm from '../Genre/AddGenreForm';
 import GenreSelector from '../Genre/GenreSelector';
 
 type Props = {
   visible: boolean;
   close: () => void;
-  showAddGenre: boolean;
-  setShowAddGenre: (v: boolean) => void;
-  title: string;
-  setTitle: (v: string) => void;
-  genres: Genre[];
-  selectedGenreId: string;
-  setSelectedGenreId: (id: string) => void;
-  selectedDay: number;
-  setSelectedDay: (date: number) => void;
-  newGenreName: string;
-  setNewGenreName: (v: string) => void;
-  newGenreColor: string;
-  setNewGenreColor: (v: string) => void;
-  saveRecord: () => void;
-  saveGenre: () => void;
-  deleteGenre: (id: string) => void;
-  year: number;
-  month: number;
-  setCurrentDate: (d: Date) => void;
 };
 
-export default function AddRecordModal({
-  visible,
-  close,
-  showAddGenre,
-  setShowAddGenre,
-  title,
-  setTitle,
-  genres,
-  selectedGenreId,
-  setSelectedGenreId,
-  selectedDay,
-  setSelectedDay,
-  newGenreName,
-  setNewGenreName,
-  newGenreColor,
-  setNewGenreColor,
-  saveRecord,
-  saveGenre,
-  deleteGenre,
-  year,
-  month,
-  setCurrentDate,
-}: Props) {
+export default function AddRecordModal({ visible, close }: Props) {
+  const {
+    genres,
+    selectedGenreId,
+    selectedDay,
+    setSelectedDay,
+    year,
+    month,
+    setCurrentDate,
+    saveRecord,
+    saveGenre,
+  } = useAppContext();
+
+  const [showAddGenre, setShowAddGenre] = useState(false);
+  const [title, setTitle] = useState('');
+  const [newGenreName, setNewGenreName] = useState('');
+  const [newGenreColor, setNewGenreColor] = useState('#4CAF50');
   const pan = Gesture.Pan()
     .onEnd((e) => {
       if (e.translationY > 80) {
@@ -109,12 +85,7 @@ export default function AddRecordModal({
 
                   <Text style={styles.genreLabel}>ジャンルを選択</Text>
 
-                  <GenreSelector
-                    genres={genres}
-                    selectedGenreId={selectedGenreId}
-                    setSelectedGenreId={setSelectedGenreId}
-                    deleteGenre={deleteGenre}
-                  />
+                  <GenreSelector />
                   <View style={styles.addGenreRow}>
                     <Pressable
                       style={({ pressed }) => [
@@ -135,7 +106,6 @@ export default function AddRecordModal({
                   setNewGenreName={setNewGenreName}
                   newGenreColor={newGenreColor}
                   setNewGenreColor={setNewGenreColor}
-                  saveGenre={saveGenre}
                   goBack={() => setShowAddGenre(false)}
                 />
               )}
@@ -143,7 +113,17 @@ export default function AddRecordModal({
 
             <Pressable
               style={styles.saveButton}
-              onPress={showAddGenre ? saveGenre : saveRecord}
+              onPress={() => {
+                if (showAddGenre) {
+                  saveGenre(newGenreName, newGenreColor);
+                  setNewGenreName('');
+                  setShowAddGenre(false);
+                } else {
+                  saveRecord(title);
+                  setTitle('');
+                  close();
+                }
+              }}
             >
               <Text style={styles.saveText}>
                 {showAddGenre ? 'ジャンル保存' : '保存'}

@@ -1,16 +1,11 @@
+import { useAppContext } from '@/context/AppContext';
+import { Ionicons } from '@expo/vector-icons';
 import { Picker } from '@react-native-picker/picker';
 import { useState } from 'react';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 
-type Props = {
-  year: number;
-  month: number;
-  changeMonth: (diff: number) => void;
-  goToday: () => void;
-};
-
-export default function MonthHeader({ year, month, changeMonth,goToday }: Props) {
+export default function MonthHeader() {
+  const { year, month, changeMonth, goToday } = useAppContext();
   const monthNames = [
     'January',
     'February',

@@ -1,24 +1,8 @@
-import { Genre } from '@/type/genre';
-import { Record } from '@/type/record';
+import { useAppContext } from '@/context/AppContext';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-type Props = {
-  records: Record[];
-  genres: Genre[];
-  year: number;
-  month: number;
-  selectedDay: number | null;
-  deleteRecord: (r:Record) => void;
-};
-
-export default function RecordList({
-  records,
-  genres,
-  year,
-  month,
-  selectedDay,
-  deleteRecord,
-}: Props) {
+export default function RecordList() {
+  const { records, genres, year, month, selectedDay, deleteRecord } = useAppContext();
   if (!selectedDay) return null;
 
   const dayRecords = records.filter(

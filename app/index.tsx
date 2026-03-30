@@ -2,104 +2,14 @@ import Calendar from '@/components/Calendar/Calendar';
 import MonthHeader from '@/components/Calendar/MonthHeader';
 import AddRecordModal from '@/components/Modal/AddRecordModal';
 import RecordList from '@/components/Record/RecordList';
-import { Record } from '@/type/record';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useAppContext } from '@/context/AppContext';
+import { useState } from 'react';
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 
 export default function Home() {
-  const defaultGenres = [
-    { id: 'programming', name: 'プログラミング', color: '#4CAF50' },
-    { id: 'reading', name: '読書', color: '#2196F3' },
-    { id: 'English', name: '英語', color: '#FF9800' },
-  ];
-
-  const today = new Date();
-  const todayDay = today.getDate();
-
-  const [isLoading, setIsLoading] = useState(true);
-
-  const [records, setRecords] = useState<Record[]>([]);
-  const [selectedDay, setSelectedDay] = useState<number>(todayDay);
+  const { streak, changeMonth, isLoading } = useAppContext();
   const [showInput, setShowInput] = useState(false);
-  const [title, setTitle] = useState('');
-  const [currentDate, setCurrentDate] = useState(new Date());
-
-  const [genres, setGenres] = useState(defaultGenres);
-  const [selectedGenreId, setSelectedGenreId] = useState(genres[0].id);
-
-  const [showAddGenre, setShowAddGenre] = useState(false);
-  const [newGenreName, setNewGenreName] = useState('');
-  const [newGenreColor, setNewGenreColor] = useState('#4CAF50');
-
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth();
-
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const days = Array.from({ length: daysInMonth }, (_, i) => ({ day: i + 1 }));
-  const firstDay = new Date(year, month, 1).getDay();
-
-  const calendarDays = [...Array(firstDay).fill(null), ...days];
-
-  function changeMonth(diff: number) {
-    const newDate = new Date(currentDate);
-    newDate.setMonth(currentDate.getMonth() + diff);
-    setCurrentDate(newDate);
-  }
-
-  function goToday() {
-    const today = new Date();
-    setCurrentDate(today);
-    setSelectedDay(today.getDate());
-  }
-
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const json = await AsyncStorage.getItem('tomato-data');
-
-        if (json !== null) {
-          const data = JSON.parse(json);
-
-          type PersistedRecord = Omit<Record, 'id'> & { id?: string };
-          const loadedRecords: Record[] = (data.records || []).map(
-            (r: PersistedRecord): Record => ({
-              id: r.id ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`,
-              year: r.year,
-              month: r.month,
-              day: r.day,
-              title: r.title,
-              genreId: r.genreId,
-            })
-          );
-
-          setRecords(loadedRecords);
-          setGenres(data.genres || defaultGenres);
-        }
-      } catch {
-        Alert.alert('エラー', 'データの読み込みに失敗しました');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    load();
-  }, []);
-
-  useEffect(() => {
-    if (isLoading) return;
-
-    const save = async () => {
-      try {
-        await AsyncStorage.setItem('tomato-data', JSON.stringify({ records, genres }));
-      } catch {
-        Alert.alert('エラー', 'データの保存に失敗しました');
-      }
-    };
-
-    save();
-  }, [records, genres, isLoading]);
 
   const pan = Gesture.Pan()
     .activeOffsetX([-20, 20])
@@ -108,94 +18,6 @@ export default function Home() {
       if (e.translationX < -50) changeMonth(1);
     })
     .runOnJS(true);
-
-  function saveRecord() {
-    if (!selectedDay) return;
-
-    const genre = genres.find((g) => g.id === selectedGenreId);
-
-    const newRecord: Record = {
-      id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
-      year,
-      month,
-      day: selectedDay,
-      title: title.trim() || (genre ? `${genre.name}の学習` : '学習'),
-      genreId: selectedGenreId,
-    };
-
-    setRecords([...records, newRecord]);
-    setTitle('');
-    setShowAddGenre(false);
-    setShowInput(false);
-  }
-
-  function saveGenre() {
-    const newGenre = {
-      id: Date.now().toString(),
-      name: newGenreName,
-      color: newGenreColor,
-    };
-
-    setGenres([...genres, newGenre]);
-    setSelectedGenreId(newGenre.id);
-    setNewGenreName('');
-    setShowAddGenre(false);
-  }
-
-  function deleteGenre(id: string) {
-    Alert.alert('ジャンル削除', '削除しますか？', [
-      { text: 'キャンセル', style: 'cancel' },
-      {
-        text: '削除',
-        style: 'destructive',
-        onPress: () => {
-          setGenres((prev) => prev.filter((g) => g.id !== id));
-        },
-      },
-    ]);
-  }
-
-  function calculateStreak(records: Record[]) {
-    const dates = records.map((r) =>
-      new Date(r.year, r.month, r.day).toDateString()
-    );
-
-    const uniqueDates = [...new Set(dates)];
-
-    let streak = 0;
-    let current = new Date();
-
-    while (true) {
-      const dateString = current.toDateString();
-
-      if (uniqueDates.includes(dateString)) {
-        streak++;
-        current.setDate(current.getDate() - 1);
-      } else {
-        break;
-      }
-    }
-
-    return streak;
-  }
-
-  const streak = calculateStreak(records);
-
-  const deleteRecord = (record: Record) => {
-    Alert.alert('記録を削除', 'この記録を削除しますか？', [
-      {
-        text: 'キャンセル',
-        style: 'cancel',
-      },
-      {
-        text: '削除',
-        style: 'destructive',
-        onPress: () => {
-          setRecords((prev) => prev.filter((r) => r.id !== record.id));
-        },
-      },
-    ]);
-  };
 
   if (isLoading) {
     return (
@@ -211,70 +33,19 @@ export default function Home() {
         <Text style={styles.streakText}>{streak} 日連続🔥</Text>
       </View>
 
-      <MonthHeader
-        year={year}
-        month={month}
-        changeMonth={changeMonth}
-        goToday={goToday}
-      />
+      <MonthHeader />
 
       <GestureDetector gesture={pan}>
-        <Calendar
-          calendarDays={calendarDays}
-          records={records}
-          setSelectedDay={setSelectedDay}
-          year={year}
-          month={month}
-          selectedDay={selectedDay}
-        />
+        <Calendar />
       </GestureDetector>
 
-      <RecordList
-        records={records}
-        genres={genres}
-        year={year}
-        month={month}
-        selectedDay={selectedDay}
-        deleteRecord={deleteRecord}
-      />
+      <RecordList />
 
-      <Pressable
-        style={styles.addButton}
-        onPress={() => {
-          setTitle('');
-          setShowInput(true);
-        }}
-      >
+      <Pressable style={styles.addButton} onPress={() => setShowInput(true)}>
         <Text style={styles.addText}>＋</Text>
       </Pressable>
 
-      <AddRecordModal
-        visible={showInput}
-        close={() => {
-          setShowInput(false);
-          setShowAddGenre(false);
-          setTitle('');
-        }}
-        showAddGenre={showAddGenre}
-        setShowAddGenre={setShowAddGenre}
-        title={title}
-        setTitle={setTitle}
-        genres={genres}
-        selectedGenreId={selectedGenreId}
-        setSelectedGenreId={setSelectedGenreId}
-        selectedDay={selectedDay}
-        setSelectedDay={setSelectedDay}
-        newGenreName={newGenreName}
-        setNewGenreName={setNewGenreName}
-        newGenreColor={newGenreColor}
-        setNewGenreColor={setNewGenreColor}
-        saveRecord={saveRecord}
-        saveGenre={saveGenre}
-        deleteGenre={deleteGenre}
-        year={year}
-        month={month}
-        setCurrentDate={setCurrentDate}
-      />
+      <AddRecordModal visible={showInput} close={() => setShowInput(false)} />
     </View>
   );
 }
@@ -302,6 +73,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     color: 'white',
   },
+
   streakBox: {
     marginBottom: 10,
   },

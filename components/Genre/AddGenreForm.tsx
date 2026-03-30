@@ -5,7 +5,6 @@ type Props = {
   setNewGenreName: (v: string) => void;
   newGenreColor: string;
   setNewGenreColor: (v: string) => void;
-  saveGenre: () => void;
   goBack: () => void;
 };
 
@@ -14,7 +13,6 @@ export default function AddGenreForm({
   setNewGenreName,
   newGenreColor,
   setNewGenreColor,
-  saveGenre,
   goBack,
 }: Props) {
   return (

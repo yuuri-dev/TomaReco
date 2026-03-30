@@ -1,24 +1,10 @@
-import { Record } from '@/type/record';
+import { useAppContext } from '@/context/AppContext';
 import { StyleSheet, Text, View } from 'react-native';
 import DayCell from './DayCell';
 
-type Props = {
-  calendarDays: ({ day: number } | null)[];
-  records: Record[];
-  setSelectedDay: (day: number) => void;
-  year: number;
-  month: number; // 0〜11の月 (Date.getMonth()のまま)
-  selectedDay: number | null;
-};
-
-export default function Calendar({
-  calendarDays,
-  records,
-  setSelectedDay,
-  year,
-  month,
-  selectedDay,
-}: Props) {
+export default function Calendar() {
+  const { calendarDays, records, setSelectedDay, year, month, selectedDay } =
+    useAppContext();
   const today = new Date();
 
   return (
