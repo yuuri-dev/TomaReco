@@ -3,6 +3,7 @@ import MonthHeader from '@/components/Calendar/MonthHeader';
 import AddRecordModal from '@/components/Modal/AddRecordModal';
 import RecordList from '@/components/Record/RecordList';
 import { useAppContext } from '@/context/AppContext';
+import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
@@ -29,8 +30,10 @@ export default function Home() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.streakBox}>
-        <Text style={styles.streakText}>{streak} 日連続🔥</Text>
+      <View style={styles.streakCard}>
+        <Ionicons name="flame" size={20} color="#ff6347" />
+        <Text style={styles.streakCount}>{streak}</Text>
+        <Text style={styles.streakLabel}>日連続</Text>
       </View>
 
       <MonthHeader />
@@ -42,7 +45,7 @@ export default function Home() {
       <RecordList />
 
       <Pressable style={styles.addButton} onPress={() => setShowInput(true)}>
-        <Text style={styles.addText}>＋</Text>
+        <Ionicons name="add" size={32} color="white" />
       </Pressable>
 
       <AddRecordModal visible={showInput} close={() => setShowInput(false)} />
@@ -53,39 +56,60 @@ export default function Home() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 20,
+    paddingTop: 16,
     alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+  },
+
+  streakCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    marginBottom: 12,
+    gap: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.06,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+
+  streakCount: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#1a1a1a',
+  },
+
+  streakLabel: {
+    fontSize: 13,
+    color: '#888',
+    fontWeight: '500',
   },
 
   addButton: {
     position: 'absolute',
     bottom: 40,
     right: 30,
-    width: 65,
-    height: 65,
-    borderRadius: 32,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
     backgroundColor: '#ff6347',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-
-  addText: {
-    fontSize: 30,
-    color: 'white',
-  },
-
-  streakBox: {
-    marginBottom: 10,
-  },
-
-  streakText: {
-    fontSize: 16,
-    fontWeight: '600',
+    shadowColor: '#ff6347',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.35,
+    shadowRadius: 8,
+    elevation: 6,
   },
 
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#f5f5f5',
   },
 });
