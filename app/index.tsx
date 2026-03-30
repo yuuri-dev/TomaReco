@@ -2,7 +2,6 @@ import Calendar from '@/components/Calendar/Calendar';
 import MonthHeader from '@/components/Calendar/MonthHeader';
 import AddRecordModal from '@/components/Modal/AddRecordModal';
 import RecordList from '@/components/Record/RecordList';
-import { Genre } from '@/type/genre';
 import { Record } from '@/type/record';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
