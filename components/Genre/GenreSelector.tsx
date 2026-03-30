@@ -1,10 +1,5 @@
+import { Genre } from '@/type/genre';
 import { ScrollView, Pressable, Text, View, StyleSheet } from 'react-native';
-
-type Genre = {
-  id: string;
-  name: string;
-  color: string;
-};
 
 type Props = {
   genres: Genre[];

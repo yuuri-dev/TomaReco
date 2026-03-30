@@ -1,19 +1,6 @@
+import { Genre } from '@/type/genre';
+import { Record } from '@/type/record';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-
-type Genre = {
-  id: string;
-  name: string;
-  color: string;
-};
-
-type Record = {
-  id: string;
-  year: number;
-  month: number;
-  day: number;
-  title: string;
-  genreId: string;
-};
 
 type Props = {
   records: Record[];

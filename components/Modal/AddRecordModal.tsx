@@ -1,3 +1,4 @@
+import { Genre } from '@/type/genre';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {
   Modal,
@@ -10,12 +11,6 @@ import {
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import AddGenreForm from '../Genre/AddGenreForm';
 import GenreSelector from '../Genre/GenreSelector';
-
-type Genre = {
-  id: string;
-  name: string;
-  color: string;
-};
 
 type Props = {
   visible: boolean;
