@@ -30,6 +30,7 @@ type AppContextType = {
   deleteGenre: (id: string) => void;
   changeMonth: (diff: number) => void;
   goToday: () => void;
+  deleteAllData: () => void;
 };
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -178,6 +179,25 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     ]);
   }
 
+  function deleteAllData() {
+    Alert.alert(
+      'データをリセット',
+      'すべての記録とジャンルが削除されます。\nこの操作は取り消せません。',
+      [
+        { text: 'キャンセル', style: 'cancel' },
+        {
+          text: '削除する',
+          style: 'destructive',
+          onPress: async () => {
+            setRecords([]);
+            setGenres(defaultGenres);
+            await AsyncStorage.removeItem('tomato-data');
+          },
+        },
+      ]
+    );
+  }
+
   return (
     <AppContext.Provider
       value={{
@@ -200,6 +220,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         deleteGenre,
         changeMonth,
         goToday,
+        deleteAllData,
       }}
     >
       {children}
