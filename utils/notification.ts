@@ -58,7 +58,7 @@ export async function scheduleDailyReminder(hour: number, minute: number): Promi
   await Notifications.cancelAllScheduledNotificationsAsync();
   await Notifications.scheduleNotificationAsync({
     content: {
-      title: '📚 今日の学習を記録しよう',
+      title: '今日の学習を記録しよう',
       body: '継続は力なり！TomaRecoで今日の学習を記録しよう。',
       sound: true,
     },
