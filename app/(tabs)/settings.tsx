@@ -3,6 +3,7 @@ import { useAppContext } from '@/context/AppContext';
 import { Genre } from '@/type/genre';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 
@@ -146,6 +147,17 @@ export default function SettingsScreen() {
             </View>
           </>
         )}
+      </View>
+
+      {/* ヘルプ */}
+      <Text style={styles.sectionTitle}>ヘルプ</Text>
+      <View style={styles.card}>
+        <SettingRow
+          icon="information-circle-outline"
+          iconColor="#ff6347"
+          label="初めての方へ"
+          onPress={() => router.push('/onboarding?from=settings')}
+        />
       </View>
 
       {/* データ管理 */}
