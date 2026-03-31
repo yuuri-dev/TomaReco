@@ -1,8 +1,15 @@
 import { Genre } from '@/type/genre';
 import { Record } from '@/type/record';
+import {
+  cancelAllReminders,
+  requestNotificationPermission,
+  scheduleDailyReminder,
+} from '@/utils/notification';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { Alert } from 'react-native';
+
+const NOTIFICATION_KEY = 'tomato-notification';
 
 const defaultGenres: Genre[] = [
   { id: 'programming', name: 'プログラミング', color: '#4CAF50' },
@@ -31,6 +38,10 @@ type AppContextType = {
   changeMonth: (diff: number) => void;
   goToday: () => void;
   deleteAllData: () => void;
+  notificationEnabled: boolean;
+  notificationTime: { hour: number; minute: number };
+  toggleNotification: () => Promise<void>;
+  updateNotificationTime: (hour: number, minute: number) => Promise<void>;
 };
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -44,6 +55,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [selectedDay, setSelectedDay] = useState<number>(today.getDate());
   const [selectedGenreId, setSelectedGenreId] = useState<string>(defaultGenres[0].id);
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
+  const [notificationEnabled, setNotificationEnabled] = useState(false);
+  const [notificationTime, setNotificationTime] = useState({ hour: 21, minute: 0 });
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
@@ -92,6 +105,16 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
           setRecords(loadedRecords);
           setGenres(data.genres || defaultGenres);
+        }
+
+        const notifJson = await AsyncStorage.getItem(NOTIFICATION_KEY);
+        if (notifJson !== null) {
+          const notif = JSON.parse(notifJson);
+          setNotificationEnabled(notif.enabled ?? false);
+          setNotificationTime({
+            hour: notif.hour ?? 21,
+            minute: notif.minute ?? 0,
+          });
         }
       } catch {
         Alert.alert('エラー', 'データの読み込みに失敗しました');
@@ -179,6 +202,37 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     ]);
   }
 
+  async function toggleNotification() {
+    if (notificationEnabled) {
+      await cancelAllReminders();
+      setNotificationEnabled(false);
+      await AsyncStorage.setItem(
+        NOTIFICATION_KEY,
+        JSON.stringify({ enabled: false, ...notificationTime })
+      );
+    } else {
+      const granted = await requestNotificationPermission();
+      if (!granted) return;
+      await scheduleDailyReminder(notificationTime.hour, notificationTime.minute);
+      setNotificationEnabled(true);
+      await AsyncStorage.setItem(
+        NOTIFICATION_KEY,
+        JSON.stringify({ enabled: true, ...notificationTime })
+      );
+    }
+  }
+
+  async function updateNotificationTime(hour: number, minute: number) {
+    setNotificationTime({ hour, minute });
+    if (notificationEnabled) {
+      await scheduleDailyReminder(hour, minute);
+    }
+    await AsyncStorage.setItem(
+      NOTIFICATION_KEY,
+      JSON.stringify({ enabled: notificationEnabled, hour, minute })
+    );
+  }
+
   function deleteAllData() {
     Alert.alert(
       'データをリセット',
@@ -221,6 +275,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         changeMonth,
         goToday,
         deleteAllData,
+        notificationEnabled,
+        notificationTime,
+        toggleNotification,
+        updateNotificationTime,
       }}
     >
       {children}

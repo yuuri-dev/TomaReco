@@ -1,6 +1,7 @@
 import { useAppContext } from '@/context/AppContext';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { Ionicons } from '@expo/vector-icons';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 
 type RowProps = {
   label: string;
@@ -32,7 +33,17 @@ function SettingRow({ label, value, icon, iconColor = '#888', onPress, danger }:
 }
 
 export default function SettingsScreen() {
-  const { genres, deleteAllData } = useAppContext();
+  const {
+    genres,
+    deleteAllData,
+    notificationEnabled,
+    notificationTime,
+    toggleNotification,
+    updateNotificationTime,
+  } = useAppContext();
+
+  const notifDate = new Date();
+  notifDate.setHours(notificationTime.hour, notificationTime.minute, 0, 0);
 
   return (
     <ScrollView
@@ -72,6 +83,44 @@ export default function SettingsScreen() {
         ))}
         {genres.length === 0 && (
           <Text style={styles.emptyText}>ジャンルがありません</Text>
+        )}
+      </View>
+
+      {/* リマインダー */}
+      <Text style={styles.sectionTitle}>リマインダー</Text>
+      <View style={styles.card}>
+        <View style={styles.row}>
+          <View style={[styles.rowIconBox, { backgroundColor: '#ff634718' }]}>
+            <Ionicons name="notifications-outline" size={18} color="#ff6347" />
+          </View>
+          <Text style={styles.rowLabel}>毎日リマインダー</Text>
+          <Switch
+            value={notificationEnabled}
+            onValueChange={toggleNotification}
+            trackColor={{ false: '#e0e0e0', true: '#ff6347' }}
+            thumbColor="white"
+          />
+        </View>
+        {notificationEnabled && (
+          <>
+            <View style={styles.divider} />
+            <View style={styles.row}>
+              <View style={[styles.rowIconBox, { backgroundColor: '#4a8fe818' }]}>
+                <Ionicons name="time-outline" size={18} color="#4a8fe8" />
+              </View>
+              <Text style={styles.rowLabel}>通知時刻</Text>
+              <DateTimePicker
+                value={notifDate}
+                mode="time"
+                display="compact"
+                onChange={(_, date) => {
+                  if (date) {
+                    updateNotificationTime(date.getHours(), date.getMinutes());
+                  }
+                }}
+              />
+            </View>
+          </>
         )}
       </View>
 
