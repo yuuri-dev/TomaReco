@@ -1,6 +1,10 @@
+import ShareCard from '@/components/Share/ShareCard';
 import { useAppContext } from '@/context/AppContext';
+import { useShare } from '@/hooks/useShare';
 import { Record } from '@/type/record';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import ViewShot from 'react-native-view-shot';
 
 function calculateLongestStreak(records: Record[]): number {
   if (records.length === 0) return 0;
@@ -26,6 +30,7 @@ const DAY_LABELS = ['日', '月', '火', '水', '木', '金', '土'];
 
 export default function StatsScreen() {
   const { records, genres, streak } = useAppContext();
+  const { cardRef, shareCard } = useShare();
 
   const today = new Date();
   const thisYear = today.getFullYear();
@@ -65,6 +70,23 @@ export default function StatsScreen() {
       contentContainerStyle={styles.content}
       showsVerticalScrollIndicator={false}
     >
+      {/* シェアカード（オフスクリーン描画用） */}
+      <Modal visible={false} transparent>
+        <ViewShot ref={cardRef} options={{ format: 'png', quality: 1 }}>
+          <ShareCard
+            streak={streak}
+            longestStreak={longestStreak}
+            totalRecords={records.length}
+          />
+        </ViewShot>
+      </Modal>
+
+      {/* シェアボタン */}
+      <Pressable style={styles.shareButton} onPress={shareCard}>
+        <Ionicons name="share-social-outline" size={18} color="white" />
+        <Text style={styles.shareButtonText}>記録をシェア</Text>
+      </Pressable>
+
       {/* 今月のまとめ */}
       <Text style={styles.sectionTitle}>今月のまとめ</Text>
       <View style={styles.cardGrid}>
@@ -166,6 +188,28 @@ const styles = StyleSheet.create({
   content: {
     padding: 16,
     paddingBottom: 40,
+  },
+
+  shareButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    backgroundColor: '#ff6347',
+    borderRadius: 14,
+    paddingVertical: 14,
+    marginBottom: 16,
+    shadowColor: '#ff6347',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+
+  shareButtonText: {
+    color: 'white',
+    fontSize: 15,
+    fontWeight: '700',
   },
 
   sectionTitle: {
