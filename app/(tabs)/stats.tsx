@@ -30,7 +30,7 @@ const DAY_LABELS = ['日', '月', '火', '水', '木', '金', '土'];
 
 export default function StatsScreen() {
   const { records, genres, streak } = useAppContext();
-  const { cardRef, shareCard } = useShare();
+  const { cardRef, shareCard } = useShare(streak);
 
   const today = new Date();
   const thisYear = today.getFullYear();

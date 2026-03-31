@@ -1,9 +1,8 @@
-import * as Sharing from 'expo-sharing';
 import { useRef } from 'react';
-import { Alert } from 'react-native';
+import { Alert, Platform, Share } from 'react-native';
 import ViewShot from 'react-native-view-shot';
 
-export function useShare() {
+export function useShare(streak: number) {
   const cardRef = useRef<ViewShot>(null);
 
   async function shareCard() {
@@ -11,19 +10,20 @@ export function useShare() {
 
     try {
       const uri = await cardRef.current.capture!();
+      const message = `🔥 ${streak}日連続学習中！\n継続は力なり。#TomaReco`;
 
-      const isAvailable = await Sharing.isAvailableAsync();
-      if (!isAvailable) {
-        Alert.alert('エラー', 'このデバイスでは共有できません');
-        return;
+      if (Platform.OS === 'ios') {
+        // iOS: テキスト＋画像を同時に渡す
+        await Share.share({ message, url: uri });
+      } else {
+        // Android: Share APIはファイルURIをurlに渡せないためテキストのみ
+        await Share.share({ message });
       }
-
-      await Sharing.shareAsync(uri, {
-        mimeType: 'image/png',
-        dialogTitle: '学習記録をシェア',
-      });
-    } catch {
-      Alert.alert('エラー', '画像の生成に失敗しました');
+    } catch (e: unknown) {
+      // ユーザーがキャンセルした場合は何もしない
+      if (e instanceof Error && e.message !== 'User did not share') {
+        Alert.alert('エラー', '画像の生成に失敗しました');
+      }
     }
   }
 
