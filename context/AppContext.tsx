@@ -35,6 +35,7 @@ type AppContextType = {
   saveGenre: (name: string, color: string) => void;
   deleteRecord: (record: Record) => void;
   deleteGenre: (id: string) => void;
+  editGenre: (id: string, name: string, color: string) => void;
   changeMonth: (diff: number) => void;
   goToday: () => void;
   deleteAllData: () => void;
@@ -191,6 +192,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     ]);
   }
 
+  function editGenre(id: string, name: string, color: string) {
+    setGenres((prev) =>
+      prev.map((g) => (g.id === id ? { ...g, name, color } : g))
+    );
+  }
+
   function deleteGenre(id: string) {
     Alert.alert('ジャンル削除', '削除しますか？', [
       { text: 'キャンセル', style: 'cancel' },
@@ -272,6 +279,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         saveGenre,
         deleteRecord,
         deleteGenre,
+        editGenre,
         changeMonth,
         goToday,
         deleteAllData,

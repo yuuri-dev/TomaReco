@@ -1,6 +1,9 @@
+import EditGenreModal from '@/components/Modal/EditGenreModal';
 import { useAppContext } from '@/context/AppContext';
+import { Genre } from '@/type/genre';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Ionicons } from '@expo/vector-icons';
+import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 
 type RowProps = {
@@ -36,11 +39,14 @@ export default function SettingsScreen() {
   const {
     genres,
     deleteAllData,
+    deleteGenre,
     notificationEnabled,
     notificationTime,
     toggleNotification,
     updateNotificationTime,
   } = useAppContext();
+
+  const [editingGenre, setEditingGenre] = useState<Genre | null>(null);
 
   const notifDate = new Date();
   notifDate.setHours(notificationTime.hour, notificationTime.minute, 0, 0);
@@ -77,6 +83,22 @@ export default function SettingsScreen() {
             <View style={styles.genreRow}>
               <View style={[styles.genreColor, { backgroundColor: g.color }]} />
               <Text style={styles.genreName}>{g.name}</Text>
+              <View style={styles.genreActions}>
+                <Pressable
+                  style={styles.genreActionBtn}
+                  onPress={() => setEditingGenre(g)}
+                  hitSlop={8}
+                >
+                  <Ionicons name="pencil-outline" size={16} color="#888" />
+                </Pressable>
+                <Pressable
+                  style={styles.genreActionBtn}
+                  onPress={() => deleteGenre(g.id)}
+                  hitSlop={8}
+                >
+                  <Ionicons name="trash-outline" size={16} color="#e05555" />
+                </Pressable>
+              </View>
             </View>
             {i < genres.length - 1 && <View style={styles.divider} />}
           </View>
@@ -85,6 +107,8 @@ export default function SettingsScreen() {
           <Text style={styles.emptyText}>ジャンルがありません</Text>
         )}
       </View>
+
+      <EditGenreModal genre={editingGenre} onClose={() => setEditingGenre(null)} />
 
       {/* リマインダー */}
       <Text style={styles.sectionTitle}>リマインダー</Text>
@@ -233,9 +257,24 @@ const styles = StyleSheet.create({
   },
 
   genreName: {
+    flex: 1,
     fontSize: 15,
     color: '#1a1a1a',
     fontWeight: '500',
+  },
+
+  genreActions: {
+    flexDirection: 'row',
+    gap: 4,
+  },
+
+  genreActionBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    backgroundColor: '#f5f5f5',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
   emptyText: {
