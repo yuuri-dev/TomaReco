@@ -1,3 +1,4 @@
+import AdBanner from '@/components/Ads/BannerAd';
 import ShareCard from '@/components/Share/ShareCard';
 import { useAppContext } from '@/context/AppContext';
 import { useShare } from '@/hooks/useShare';
@@ -283,6 +284,7 @@ export default function StatsScreen() {
         )}
       </View>
     </ScrollView>
+    <AdBanner />
     </View>
   );
 }
