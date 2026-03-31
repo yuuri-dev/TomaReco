@@ -3,7 +3,7 @@ import { useAppContext } from '@/context/AppContext';
 import { useShare } from '@/hooks/useShare';
 import { Record } from '@/type/record';
 import { Ionicons } from '@expo/vector-icons';
-import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import ViewShot from 'react-native-view-shot';
 
 function calculateLongestStreak(records: Record[]): number {
@@ -65,13 +65,9 @@ export default function StatsScreen() {
   });
 
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.content}
-      showsVerticalScrollIndicator={false}
-    >
-      {/* シェアカード（オフスクリーン描画用） */}
-      <Modal visible={false} transparent>
+    <View style={{ flex: 1 }}>
+      {/* シェアカード（オフスクリーン描画用・常に描画済みにする） */}
+      <View style={styles.offscreen} pointerEvents="none">
         <ViewShot ref={cardRef} options={{ format: 'png', quality: 1 }}>
           <ShareCard
             streak={streak}
@@ -79,8 +75,13 @@ export default function StatsScreen() {
             totalRecords={records.length}
           />
         </ViewShot>
-      </Modal>
+      </View>
 
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.content}
+      showsVerticalScrollIndicator={false}
+    >
       {/* シェアボタン */}
       <Pressable style={styles.shareButton} onPress={shareCard}>
         <Ionicons name="share-social-outline" size={18} color="white" />
@@ -165,6 +166,7 @@ export default function StatsScreen() {
         )}
       </View>
     </ScrollView>
+    </View>
   );
 }
 
@@ -188,6 +190,12 @@ const styles = StyleSheet.create({
   content: {
     padding: 16,
     paddingBottom: 40,
+  },
+
+  offscreen: {
+    position: 'absolute',
+    top: -9999,
+    left: -9999,
   },
 
   shareButton: {
