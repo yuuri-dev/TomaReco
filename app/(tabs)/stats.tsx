@@ -82,12 +82,6 @@ export default function StatsScreen() {
       contentContainerStyle={styles.content}
       showsVerticalScrollIndicator={false}
     >
-      {/* シェアボタン */}
-      <Pressable style={styles.shareButton} onPress={shareCard}>
-        <Ionicons name="share-social-outline" size={18} color="white" />
-        <Text style={styles.shareButtonText}>記録をシェア</Text>
-      </Pressable>
-
       {/* 今月のまとめ */}
       <Text style={styles.sectionTitle}>今月のまとめ</Text>
       <View style={styles.cardGrid}>
@@ -108,6 +102,12 @@ export default function StatsScreen() {
           <Text style={styles.statLabel}>最長連続</Text>
         </View>
       </View>
+
+      {/* シェアボタン */}
+      <Pressable style={styles.shareButton} onPress={shareCard}>
+        <Ionicons name="share-social-outline" size={18} color="white" />
+        <Text style={styles.shareButtonText}>記録をシェア</Text>
+      </Pressable>
 
       {/* 最近7日間 */}
       <Text style={styles.sectionTitle}>最近7日間</Text>
