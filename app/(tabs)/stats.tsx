@@ -4,7 +4,10 @@ import { useShare } from '@/hooks/useShare';
 import { Record } from '@/type/record';
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+
+const tomatoImg = require('@/assets/images/tomato.jpg');
+const naegiImg = require('@/assets/images/naegi.jpg');
 import { G, Path, Svg, Text as SvgText } from 'react-native-svg';
 import ViewShot from 'react-native-view-shot';
 
@@ -228,12 +231,9 @@ export default function StatsScreen() {
               <Text style={[styles.dayLabel, isToday && styles.dayLabelToday]}>
                 {DAY_LABELS[date.getDay()]}
               </Text>
-              <View
-                style={[
-                  styles.dayDot,
-                  hasStudy ? styles.dayDotStudied : styles.dayDotEmpty,
-                  isToday && styles.dayDotToday,
-                ]}
+              <Image
+                source={hasStudy ? tomatoImg : naegiImg}
+                style={[styles.dayImg, !hasStudy && styles.dayImgNaegi]}
               />
               <Text style={[styles.dayDate, isToday && styles.dayDateToday]}>
                 {date.getDate()}
@@ -414,23 +414,14 @@ const styles = StyleSheet.create({
     color: '#ff6347',
   },
 
-  dayDot: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
+  dayImg: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
   },
 
-  dayDotStudied: {
-    backgroundColor: '#ff6347',
-  },
-
-  dayDotEmpty: {
-    backgroundColor: '#f0f0f0',
-  },
-
-  dayDotToday: {
-    borderWidth: 2,
-    borderColor: '#ff6347',
+  dayImgNaegi: {
+    opacity: 0.5,
   },
 
   dayDate: {
