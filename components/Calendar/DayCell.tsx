@@ -68,20 +68,20 @@ const styles = StyleSheet.create({
   },
 
   dotArea: {
-    height: 18,
+    height: 26,
     justifyContent: 'center',
     alignItems: 'center',
   },
 
   icon: {
-    width: 16,
-    height: 16,
-    borderRadius: 8,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
   },
 
   iconSmall: {
-    width: 13,
-    height: 13,
-    borderRadius: 6,
+    width: 16,
+    height: 16,
+    borderRadius: 8,
   },
 });
