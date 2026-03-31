@@ -77,7 +77,7 @@ export default function SettingsScreen() {
 
       {/* ジャンル */}
       <Text style={styles.sectionTitle}>ジャンル</Text>
-      <View style={styles.card}>
+      <View style={[styles.card, styles.genreCard]}>
         {genres.map((g, i) => (
           <View key={g.id}>
             <View style={styles.genreRow}>
@@ -240,6 +240,10 @@ const styles = StyleSheet.create({
 
   dangerText: {
     color: '#e05555',
+  },
+
+  genreCard: {
+    overflow: 'visible',
   },
 
   genreRow: {
