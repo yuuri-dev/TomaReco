@@ -1,24 +1,9 @@
-import { ScrollView, Pressable, Text, View, StyleSheet } from 'react-native';
+import { useAppContext } from '@/context/AppContext';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-type Genre = {
-  id: string;
-  name: string;
-  color: string;
-};
+export default function GenreSelector() {
+  const { genres, selectedGenreId, setSelectedGenreId, deleteGenre } = useAppContext();
 
-type Props = {
-  genres: Genre[];
-  selectedGenreId: string;
-  setSelectedGenreId: (id: string) => void;
-  deleteGenre: (id: string) => void;
-};
-
-export default function GenreSelector({
-  genres,
-  selectedGenreId,
-  setSelectedGenreId,
-  deleteGenre,
-}: Props) {
   return (
     <ScrollView
       horizontal
@@ -33,16 +18,20 @@ export default function GenreSelector({
             key={g.id}
             onPress={() => setSelectedGenreId(g.id)}
             onLongPress={() => deleteGenre(g.id)}
-            style={[styles.genre, selected && { backgroundColor: g.color }]}
+            style={[
+              styles.chip,
+              selected
+                ? { backgroundColor: g.color, borderColor: g.color }
+                : { borderColor: '#e0e0e0' },
+            ]}
           >
             <View
               style={[
                 styles.dot,
-                { backgroundColor: selected ? 'white' : g.color },
+                { backgroundColor: selected ? 'rgba(255,255,255,0.8)' : g.color },
               ]}
             />
-
-            <Text style={[styles.text, selected && { color: 'white' }]}>
+            <Text style={[styles.label, selected && styles.labelSelected]}>
               {g.name}
             </Text>
           </Pressable>
@@ -54,35 +43,35 @@ export default function GenreSelector({
 
 const styles = StyleSheet.create({
   container: {
-    paddingRight: 20,
-    alignItems: 'center',
+    paddingBottom: 4,
+    gap: 8,
   },
 
-  genre: {
+  chip: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 36, // ←高さ固定
     paddingHorizontal: 14,
-    borderRadius: 18,
-    backgroundColor: '#eee',
-    marginRight: 10,
+    paddingVertical: 8,
+    borderRadius: 20,
+    borderWidth: 1.5,
+    backgroundColor: 'transparent',
+    gap: 6,
   },
 
   dot: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    marginRight: 6,
   },
 
-  text: {
+  label: {
     fontSize: 13,
+    fontWeight: '500',
+    color: '#555',
   },
 
-  addGenre: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: 36,
-    paddingHorizontal: 12,
+  labelSelected: {
+    color: 'white',
+    fontWeight: '600',
   },
 });

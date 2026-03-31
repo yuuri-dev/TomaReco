@@ -1,31 +1,24 @@
-import { Record } from '@/type/record';
+import { useAppContext } from '@/context/AppContext';
 import { StyleSheet, Text, View } from 'react-native';
 import DayCell from './DayCell';
 
-type Props = {
-  calendarDays: ({ day: number } | null)[];
-  records: Record[];
-  setSelectedDay: (day: number) => void;
-  year: number;
-  month: number; // 0〜11の月 (Date.getMonth()のまま)
-  selectedDay: number | null;
-};
-
-export default function Calendar({
-  calendarDays,
-  records,
-  setSelectedDay,
-  year,
-  month,
-  selectedDay,
-}: Props) {
+export default function Calendar() {
+  const { calendarDays, records, setSelectedDay, year, month, selectedDay } =
+    useAppContext();
   const today = new Date();
 
   return (
     <View style={styles.calendar}>
       <View style={styles.weekRow}>
-        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((d) => (
-          <Text key={d} style={styles.week}>
+        {['日', '月', '火', '水', '木', '金', '土'].map((d, i) => (
+          <Text
+            key={d}
+            style={[
+              styles.week,
+              i === 0 && styles.weekSun,
+              i === 6 && styles.weekSat,
+            ]}
+          >
             {d}
           </Text>
         ))}
@@ -67,13 +60,15 @@ const styles = StyleSheet.create({
     width: '90%',
     backgroundColor: 'white',
     borderRadius: 16,
-    paddingVertical: 15,
+    paddingVertical: 12,
+    paddingHorizontal: 4,
 
     shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
 
-    elevation: 5,
+    elevation: 4,
   },
 
   grid: {
@@ -88,12 +83,23 @@ const styles = StyleSheet.create({
 
   weekRow: {
     flexDirection: 'row',
-    marginBottom: 5,
+    marginBottom: 4,
+    paddingHorizontal: 2,
   },
 
   week: {
     width: '14.28%',
     textAlign: 'center',
+    fontSize: 12,
     fontWeight: '600',
+    color: '#888',
+  },
+
+  weekSun: {
+    color: '#e05555',
+  },
+
+  weekSat: {
+    color: '#4a8fe8',
   },
 });

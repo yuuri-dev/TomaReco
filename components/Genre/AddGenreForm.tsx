@@ -1,12 +1,22 @@
+import { Ionicons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+
+const COLORS = [
+  '#ff6347',
+  '#4CAF50',
+  '#2196F3',
+  '#FF9800',
+  '#E91E63',
+  '#9C27B0',
+];
 
 type Props = {
   newGenreName: string;
   setNewGenreName: (v: string) => void;
   newGenreColor: string;
   setNewGenreColor: (v: string) => void;
-  saveGenre: () => void;
   goBack: () => void;
+  onSave: () => void;
 };
 
 export default function AddGenreForm({
@@ -14,121 +24,174 @@ export default function AddGenreForm({
   setNewGenreName,
   newGenreColor,
   setNewGenreColor,
-  saveGenre,
   goBack,
+  onSave,
 }: Props) {
   return (
     <>
-      <Text style={styles.title}>ジャンルを追加</Text>
+      <View style={styles.header}>
+        <Pressable onPress={goBack} style={styles.backButton}>
+          <Ionicons name="chevron-back" size={22} color="#333" />
+        </Pressable>
+        <Text style={styles.title}>新しいジャンル</Text>
+        <View style={styles.headerSpacer} />
+      </View>
 
+      <Text style={styles.label}>ジャンル名</Text>
       <TextInput
-        placeholder="ジャンル名"
+        placeholder="例) リスニング"
+        placeholderTextColor="#bbb"
         value={newGenreName}
         onChangeText={setNewGenreName}
         style={styles.input}
+        autoFocus
       />
 
+      <Text style={styles.label}>カラー</Text>
       <View style={styles.colorRow}>
-        {['#4CAF50', '#2196F3', '#FF9800', '#E91E63'].map((c) => {
+        {COLORS.map((c) => {
           const selected = newGenreColor === c;
-
           return (
             <Pressable
               key={c}
               onPress={() => setNewGenreColor(c)}
-              style={[
-                styles.color,
-                { backgroundColor: c },
-                selected && styles.selectedColor,
-              ]}
+              style={[styles.colorSwatch, { backgroundColor: c }]}
             >
-              {selected && <Text style={styles.check}>✓</Text>}
+              {selected && (
+                <View style={styles.checkCircle}>
+                  <Ionicons name="checkmark" size={14} color={c} />
+                </View>
+              )}
             </Pressable>
           );
         })}
       </View>
 
-      <View style={{ marginTop: 20 }}>
-        <Pressable onPress={goBack}>
-          <Text style={{ color: '#666' }}>← 戻る</Text>
-        </Pressable>
+      <View style={styles.preview}>
+        <View style={[styles.previewDot, { backgroundColor: newGenreColor }]} />
+        <Text style={styles.previewText}>
+          {newGenreName || 'ジャンル名'}
+        </Text>
       </View>
+
+      <Pressable
+        style={[styles.saveButton, !newGenreName && styles.saveButtonDisabled]}
+        onPress={onSave}
+        disabled={!newGenreName}
+      >
+        <Text style={styles.saveText}>追加する</Text>
+      </Pressable>
     </>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'space-between',
-  },
-
-  footer: {
-    marginTop: 20,
-  },
-
-  saveButton: {
-    backgroundColor: '#ff6347',
-    padding: 14,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-
-  saveText: {
-    color: 'white',
-    fontWeight: '600',
-  },
-
-  backText: {
-    textAlign: 'center',
-    marginTop: 10,
-    color: '#666',
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-      marginBottom: 18,
-    textAlign:'center'
-  },
-
-  input: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    padding: 10,
-    borderRadius: 8,
-    marginBottom: 10,
-  },
-
-  selected: {
-    borderWidth: 3,
-    borderColor: '#333',
-  },
-  colorRow: {
+  header: {
     flexDirection: 'row',
-    marginBottom: 20,
+    alignItems: 'center',
+    marginBottom: 24,
   },
 
-  color: {
+  backButton: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    marginRight: 12,
+    backgroundColor: '#f5f5f5',
     justifyContent: 'center',
     alignItems: 'center',
   },
 
-  selectedColor: {
-    borderWidth: 3,
-    borderColor: '#333',
+  title: {
+    flex: 1,
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#1a1a1a',
+    textAlign: 'center',
   },
 
-  check: {
-    color: 'white',
-    fontWeight: 'bold',
+  headerSpacer: {
+    width: 36,
   },
 
-  backButton: {
-    marginTop: 10,
+  label: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#aaa',
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
+    marginBottom: 8,
+  },
+
+  input: {
+    backgroundColor: '#f5f5f5',
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    fontSize: 15,
+    color: '#1a1a1a',
+    marginBottom: 20,
+  },
+
+  colorRow: {
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 24,
+  },
+
+  colorSwatch: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    justifyContent: 'center',
     alignItems: 'center',
+  },
+
+  checkCircle: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  preview: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    marginBottom: 24,
+    gap: 8,
+  },
+
+  previewDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+  },
+
+  previewText: {
+    fontSize: 14,
+    color: '#555',
+    fontWeight: '500',
+  },
+
+  saveButton: {
+    backgroundColor: '#ff6347',
+    borderRadius: 14,
+    paddingVertical: 15,
+    alignItems: 'center',
+  },
+
+  saveButtonDisabled: {
+    opacity: 0.4,
+  },
+
+  saveText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '700',
   },
 });
