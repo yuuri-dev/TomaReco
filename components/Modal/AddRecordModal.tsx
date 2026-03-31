@@ -85,6 +85,9 @@ export default function AddRecordModal({ visible, close }: Props) {
 
                 <Text style={styles.label}>ジャンル</Text>
                 <GenreSelector />
+                {!genre && (
+                  <Text style={styles.errorText}>ジャンルを選択してください</Text>
+                )}
 
                 <Pressable
                   style={styles.addGenreChip}
@@ -95,7 +98,8 @@ export default function AddRecordModal({ visible, close }: Props) {
                 </Pressable>
 
                 <Pressable
-                  style={styles.saveButton}
+                  style={[styles.saveButton, !genre && styles.saveButtonDisabled]}
+                  disabled={!genre}
                   onPress={() => {
                     saveRecord(title);
                     setTitle('');
@@ -208,12 +212,23 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
 
+  errorText: {
+    fontSize: 12,
+    color: '#e05555',
+    marginTop: 6,
+    marginBottom: 2,
+  },
+
   saveButton: {
     backgroundColor: '#ff6347',
     borderRadius: 14,
     paddingVertical: 15,
     alignItems: 'center',
     marginTop: 24,
+  },
+
+  saveButtonDisabled: {
+    opacity: 0.4,
   },
 
   saveText: {
