@@ -10,7 +10,7 @@ export function useShare(streak: number) {
 
     try {
       const uri = await cardRef.current.capture!();
-      const message = `🔥 ${streak}日連続学習中！\n継続は力なり。#TomaReco`;
+      const message = `🔥 ${streak}日連続学習中！\n継続は力なり。#TomaReco\nhttps://apps.apple.com/jp/app/tomareco/id6760455427`;
 
       if (Platform.OS === 'ios') {
         // iOS: テキスト＋画像を同時に渡す
