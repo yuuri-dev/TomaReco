@@ -1,4 +1,7 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+
+const tomatoImg = require('@/assets/images/tomato.jpg');
+const naegiImg = require('@/assets/images/naegi.jpg');
 
 type Props = {
   day: number;
@@ -18,7 +21,11 @@ export default function DayCell({ day, hasStudy, isToday, isSelected, onPress }:
         <Text style={[styles.date, isToday && styles.todayText]}>{day}</Text>
       </View>
       <View style={styles.dotArea}>
-        {hasStudy && <View style={styles.dot} />}
+        {hasStudy ? (
+          <Image source={tomatoImg} style={styles.icon} />
+        ) : isToday ? (
+          <Image source={naegiImg} style={styles.iconSmall} />
+        ) : null}
       </View>
     </Pressable>
   );
@@ -61,15 +68,20 @@ const styles = StyleSheet.create({
   },
 
   dotArea: {
-    height: 6,
+    height: 18,
     justifyContent: 'center',
     alignItems: 'center',
   },
 
-  dot: {
-    width: 5,
-    height: 5,
-    borderRadius: 3,
-    backgroundColor: '#ff6347',
+  icon: {
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+  },
+
+  iconSmall: {
+    width: 13,
+    height: 13,
+    borderRadius: 6,
   },
 });
