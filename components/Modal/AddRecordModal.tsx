@@ -141,26 +141,27 @@ const styles = StyleSheet.create({
   sheet: {
     backgroundColor: 'white',
     paddingHorizontal: 24,
-    paddingBottom: 40,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
+    paddingBottom: 48,
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    minHeight: 520,
   },
 
   dragBar: {
-    width: 36,
+    width: 40,
     height: 4,
     borderRadius: 2,
-    backgroundColor: '#ddd',
+    backgroundColor: '#e0e0e0',
     alignSelf: 'center',
-    marginTop: 12,
-    marginBottom: 20,
+    marginTop: 14,
+    marginBottom: 24,
   },
 
   sheetTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '700',
     color: '#1a1a1a',
-    marginBottom: 24,
+    marginBottom: 28,
   },
 
   label: {
@@ -169,37 +170,37 @@ const styles = StyleSheet.create({
     color: '#aaa',
     letterSpacing: 0.8,
     textTransform: 'uppercase',
-    marginBottom: 8,
+    marginBottom: 10,
   },
 
   dateRow: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#f5f5f5',
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 2,
-    marginBottom: 20,
+    borderRadius: 14,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    marginBottom: 24,
     gap: 8,
   },
 
   input: {
     backgroundColor: '#f5f5f5',
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
+    borderRadius: 14,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
     fontSize: 15,
     color: '#1a1a1a',
-    marginBottom: 20,
+    marginBottom: 24,
   },
 
   addGenreChip: {
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'flex-start',
-    marginTop: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    marginTop: 14,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
     borderRadius: 20,
     borderWidth: 1,
     borderColor: '#e0e0e0',
@@ -215,16 +216,16 @@ const styles = StyleSheet.create({
   errorText: {
     fontSize: 12,
     color: '#e05555',
-    marginTop: 6,
+    marginTop: 8,
     marginBottom: 2,
   },
 
   saveButton: {
     backgroundColor: '#ff6347',
-    borderRadius: 14,
-    paddingVertical: 15,
+    borderRadius: 16,
+    paddingVertical: 17,
     alignItems: 'center',
-    marginTop: 24,
+    marginTop: 32,
   },
 
   saveButtonDisabled: {
@@ -235,5 +236,6 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: '700',
+    letterSpacing: 0.3,
   },
 });
