@@ -1,6 +1,6 @@
 import { useAppContext } from '@/context/AppContext';
 import { Ionicons } from '@expo/vector-icons';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 export default function RecordList() {
   const { records, genres, year, month, selectedDay, deleteRecord } = useAppContext();
@@ -22,24 +22,30 @@ export default function RecordList() {
           <Text style={styles.emptyText}>記録がありません</Text>
         </View>
       ) : (
-        dayRecords.map((r) => {
-          const genre = genres.find((g) => g.id === r.genreId);
+        <ScrollView
+          style={styles.scrollArea}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          {dayRecords.map((r) => {
+            const genre = genres.find((g) => g.id === r.genreId);
 
-          return (
-            <Pressable
-              key={r.id}
-              style={[styles.recordCard, { borderLeftColor: genre?.color || '#ddd' }]}
-              onLongPress={() => deleteRecord(r)}
-            >
-              <Text style={styles.recordTitle}>{r.title}</Text>
-              {genre && (
-                <Text style={[styles.genreLabel, { color: genre.color }]}>
-                  {genre.name}
-                </Text>
-              )}
-            </Pressable>
-          );
-        })
+            return (
+              <Pressable
+                key={r.id}
+                style={[styles.recordCard, { borderLeftColor: genre?.color || '#ddd' }]}
+                onLongPress={() => deleteRecord(r)}
+              >
+                <Text style={styles.recordTitle}>{r.title}</Text>
+                {genre && (
+                  <Text style={[styles.genreLabel, { color: genre.color }]}>
+                    {genre.name}
+                  </Text>
+                )}
+              </Pressable>
+            );
+          })}
+        </ScrollView>
       )}
     </View>
   );
@@ -57,6 +63,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.06,
     shadowRadius: 8,
     elevation: 3,
+    maxHeight: 260,
+  },
+
+  scrollArea: {
+    flexGrow: 0,
   },
 
   logTitle: {
