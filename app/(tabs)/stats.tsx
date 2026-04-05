@@ -145,6 +145,7 @@ export default function StatsScreen() {
   const { records, genres, streak } = useAppContext();
   const { cardRef, shareCard } = useShare(streak);
   const [showPieModal, setShowPieModal] = useState(false);
+  const [summaryTab, setSummaryTab] = useState<'month' | 'all'>('month');
 
   const today = new Date();
   const thisYear = today.getFullYear();
@@ -202,52 +203,68 @@ export default function StatsScreen() {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        {/* 今月のまとめ */}
-        <Text style={styles.sectionTitle}>今月のまとめ</Text>
-        <View style={styles.card}>
-          <View style={styles.statRow}>
-            <Text style={styles.statLabel}>学習日数</Text>
-            <Text style={styles.statValue}>{studyDays}<Text style={styles.statUnit}>日</Text></Text>
-          </View>
-          <View style={styles.divider} />
-          <View style={styles.statRow}>
-            <Text style={styles.statLabel}>記録数</Text>
-            <Text style={styles.statValue}>{monthRecords.length}<Text style={styles.statUnit}>件</Text></Text>
-          </View>
-          <View style={styles.divider} />
-          <View style={styles.statRow}>
-            <Text style={styles.statLabel}>現在の連続</Text>
-            <Text style={[styles.statValue, styles.accentValue]}>{streak}<Text style={[styles.statUnit, styles.accentValue]}>日</Text></Text>
-          </View>
-          <View style={styles.divider} />
-          <View style={styles.statRow}>
-            <Text style={styles.statLabel}>最長連続</Text>
-            <Text style={styles.statValue}>{longestStreak}<Text style={styles.statUnit}>日</Text></Text>
-          </View>
+        {/* まとめ タブ切り替え */}
+        <View style={styles.tabBar}>
+          <Pressable
+            style={[styles.tabItem, summaryTab === 'month' && styles.tabItemActive]}
+            onPress={() => setSummaryTab('month')}
+          >
+            <Text style={[styles.tabText, summaryTab === 'month' && styles.tabTextActive]}>今月</Text>
+          </Pressable>
+          <Pressable
+            style={[styles.tabItem, summaryTab === 'all' && styles.tabItemActive]}
+            onPress={() => setSummaryTab('all')}
+          >
+            <Text style={[styles.tabText, summaryTab === 'all' && styles.tabTextActive]}>今まで</Text>
+          </Pressable>
         </View>
 
-        {/* 今までのまとめ */}
-        <Text style={styles.sectionTitle}>今までのまとめ</Text>
         <View style={styles.card}>
-          <View style={styles.statRow}>
-            <Text style={styles.statLabel}>総学習日数</Text>
-            <Text style={styles.statValue}>{totalStudyDays}<Text style={styles.statUnit}>日</Text></Text>
-          </View>
-          <View style={styles.divider} />
-          <View style={styles.statRow}>
-            <Text style={styles.statLabel}>総記録数</Text>
-            <Text style={styles.statValue}>{records.length}<Text style={styles.statUnit}>件</Text></Text>
-          </View>
-          <View style={styles.divider} />
-          <View style={styles.statRow}>
-            <Text style={styles.statLabel}>最長連続</Text>
-            <Text style={styles.statValue}>{longestStreak}<Text style={styles.statUnit}>日</Text></Text>
-          </View>
-          <View style={styles.divider} />
-          <View style={styles.statRow}>
-            <Text style={styles.statLabel}>ジャンル数</Text>
-            <Text style={styles.statValue}>{activeGenres}<Text style={styles.statUnit}>個</Text></Text>
-          </View>
+          {summaryTab === 'month' ? (
+            <>
+              <View style={styles.statRow}>
+                <Text style={styles.statLabel}>学習日数</Text>
+                <Text style={styles.statValue}>{studyDays}<Text style={styles.statUnit}>日</Text></Text>
+              </View>
+              <View style={styles.divider} />
+              <View style={styles.statRow}>
+                <Text style={styles.statLabel}>記録数</Text>
+                <Text style={styles.statValue}>{monthRecords.length}<Text style={styles.statUnit}>件</Text></Text>
+              </View>
+              <View style={styles.divider} />
+              <View style={styles.statRow}>
+                <Text style={styles.statLabel}>現在の連続</Text>
+                <Text style={[styles.statValue, styles.accentValue]}>{streak}<Text style={[styles.statUnit, styles.accentValue]}>日</Text></Text>
+              </View>
+              <View style={styles.divider} />
+              <View style={styles.statRow}>
+                <Text style={styles.statLabel}>最長連続</Text>
+                <Text style={styles.statValue}>{longestStreak}<Text style={styles.statUnit}>日</Text></Text>
+              </View>
+            </>
+          ) : (
+            <>
+              <View style={styles.statRow}>
+                <Text style={styles.statLabel}>総学習日数</Text>
+                <Text style={styles.statValue}>{totalStudyDays}<Text style={styles.statUnit}>日</Text></Text>
+              </View>
+              <View style={styles.divider} />
+              <View style={styles.statRow}>
+                <Text style={styles.statLabel}>総記録数</Text>
+                <Text style={styles.statValue}>{records.length}<Text style={styles.statUnit}>件</Text></Text>
+              </View>
+              <View style={styles.divider} />
+              <View style={styles.statRow}>
+                <Text style={styles.statLabel}>最長連続</Text>
+                <Text style={styles.statValue}>{longestStreak}<Text style={styles.statUnit}>日</Text></Text>
+              </View>
+              <View style={styles.divider} />
+              <View style={styles.statRow}>
+                <Text style={styles.statLabel}>ジャンル数</Text>
+                <Text style={styles.statValue}>{activeGenres}<Text style={styles.statUnit}>個</Text></Text>
+              </View>
+            </>
+          )}
         </View>
 
         {/* シェアボタン */}
@@ -394,6 +411,40 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     marginBottom: 10,
     marginTop: 8,
+  },
+
+  tabBar: {
+    flexDirection: 'row',
+    backgroundColor: '#efefef',
+    borderRadius: 12,
+    padding: 3,
+    marginBottom: 10,
+  },
+
+  tabItem: {
+    flex: 1,
+    paddingVertical: 8,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+
+  tabItemActive: {
+    backgroundColor: 'white',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+
+  tabText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#999',
+  },
+
+  tabTextActive: {
+    color: '#1a1a1a',
   },
 
   statRow: {
