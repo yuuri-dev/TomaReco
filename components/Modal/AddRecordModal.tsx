@@ -10,7 +10,6 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import AddGenreForm from '../Genre/AddGenreForm';
 import GenreSelector from '../Genre/GenreSelector';
 
@@ -37,95 +36,90 @@ export default function AddRecordModal({ visible, close }: Props) {
   const [newGenreName, setNewGenreName] = useState('');
   const [newGenreColor, setNewGenreColor] = useState('#ff6347');
 
-  const pan = Gesture.Pan()
-    .onEnd((e) => {
-      if (e.translationY > 80) close();
-    })
-    .runOnJS(true);
-
   const genre = genres.find((g) => g.id === selectedGenreId);
   const selectedDate = new Date(year, month, selectedDay ?? 1);
 
   return (
-    <Modal visible={visible} transparent animationType="slide">
+    <Modal visible={visible} transparent animationType="fade">
       <View style={styles.overlay}>
         <Pressable style={StyleSheet.absoluteFill} onPress={close} />
 
-        <GestureDetector gesture={pan}>
-          <View style={styles.sheet}>
-            <View style={styles.dragBar} />
-
-            {!showAddGenre ? (
-              <>
-                <Text style={styles.sheetTitle}>記録を追加</Text>
-
-                <Text style={styles.label}>日付</Text>
-                <View style={styles.dateRow}>
-                  <Ionicons name="calendar-outline" size={18} color="#aaa" />
-                  <DateTimePicker
-                    value={selectedDate}
-                    mode="date"
-                    display="compact"
-                    onChange={(_, date) => {
-                      if (!date) return;
-                      setSelectedDay(date.getDate());
-                      setCurrentDate(date);
-                    }}
-                  />
-                </View>
-
-                <Text style={styles.label}>タイトル</Text>
-                <TextInput
-                  value={title}
-                  onChangeText={setTitle}
-                  placeholder={`${genre?.name ?? '英語'}の勉強`}
-                  placeholderTextColor="#bbb"
-                  style={styles.input}
-                />
-
-                <Text style={styles.label}>ジャンル</Text>
-                <GenreSelector />
-                {!genre && (
-                  <Text style={styles.errorText}>ジャンルを選択してください</Text>
-                )}
-
-                <Pressable
-                  style={styles.addGenreChip}
-                  onPress={() => setShowAddGenre(true)}
-                >
-                  <Ionicons name="add" size={15} color="#888" />
-                  <Text style={styles.addGenreText}>新しいジャンル</Text>
+        <View style={styles.dialog}>
+          {!showAddGenre ? (
+            <>
+              <View style={styles.header}>
+                <Text style={styles.title}>記録を追加</Text>
+                <Pressable onPress={close} hitSlop={12}>
+                  <Ionicons name="close" size={22} color="#aaa" />
                 </Pressable>
+              </View>
 
-                <Pressable
-                  style={[styles.saveButton, !genre && styles.saveButtonDisabled]}
-                  disabled={!genre}
-                  onPress={() => {
-                    saveRecord(title);
-                    setTitle('');
-                    close();
+              <Text style={styles.label}>日付</Text>
+              <View style={styles.dateRow}>
+                <Ionicons name="calendar-outline" size={18} color="#aaa" />
+                <DateTimePicker
+                  value={selectedDate}
+                  mode="date"
+                  display="compact"
+                  onChange={(_, date) => {
+                    if (!date) return;
+                    setSelectedDay(date.getDate());
+                    setCurrentDate(date);
                   }}
-                >
-                  <Text style={styles.saveText}>保存する</Text>
-                </Pressable>
-              </>
-            ) : (
-              <AddGenreForm
-                newGenreName={newGenreName}
-                setNewGenreName={setNewGenreName}
-                newGenreColor={newGenreColor}
-                setNewGenreColor={setNewGenreColor}
-                goBack={() => setShowAddGenre(false)}
-                onSave={() => {
-                  saveGenre(newGenreName, newGenreColor);
-                  setNewGenreName('');
-                  setNewGenreColor('#ff6347');
-                  setShowAddGenre(false);
-                }}
+                />
+              </View>
+
+              <Text style={styles.label}>タイトル</Text>
+              <TextInput
+                value={title}
+                onChangeText={setTitle}
+                placeholder={`${genre?.name ?? '英語'}の勉強`}
+                placeholderTextColor="#bbb"
+                style={styles.input}
               />
-            )}
-          </View>
-        </GestureDetector>
+
+              <Text style={styles.label}>ジャンル</Text>
+              <GenreSelector />
+              {!genre && (
+                <Text style={styles.errorText}>ジャンルを選択してください</Text>
+              )}
+
+              <Pressable
+                style={styles.addGenreChip}
+                onPress={() => setShowAddGenre(true)}
+              >
+                <Ionicons name="add" size={15} color="#888" />
+                <Text style={styles.addGenreText}>新しいジャンル</Text>
+              </Pressable>
+
+              <Pressable
+                style={[styles.saveButton, !genre && styles.saveButtonDisabled]}
+                disabled={!genre}
+                onPress={() => {
+                  saveRecord(title);
+                  setTitle('');
+                  close();
+                }}
+              >
+                <Text style={styles.saveText}>保存する</Text>
+              </Pressable>
+            </>
+          ) : (
+            <AddGenreForm
+              newGenreName={newGenreName}
+              setNewGenreName={setNewGenreName}
+              newGenreColor={newGenreColor}
+              setNewGenreColor={setNewGenreColor}
+              goBack={() => setShowAddGenre(false)}
+              onSave={() => {
+                saveGenre(newGenreName, newGenreColor);
+                setNewGenreName('');
+                setNewGenreColor('#ff6347');
+                setShowAddGenre(false);
+              }}
+            />
+          )}
+        </View>
       </View>
     </Modal>
   );
@@ -134,34 +128,35 @@ export default function AddRecordModal({ visible, close }: Props) {
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    justifyContent: 'flex-end',
-  },
-
-  sheet: {
-    backgroundColor: 'white',
+    backgroundColor: 'rgba(0,0,0,0.45)',
+    justifyContent: 'center',
+    alignItems: 'center',
     paddingHorizontal: 24,
-    paddingBottom: 48,
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
-    minHeight: 520,
   },
 
-  dragBar: {
-    width: 40,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: '#e0e0e0',
-    alignSelf: 'center',
-    marginTop: 14,
+  dialog: {
+    width: '100%',
+    backgroundColor: 'white',
+    borderRadius: 24,
+    padding: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.15,
+    shadowRadius: 24,
+    elevation: 10,
+  },
+
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 24,
   },
 
-  sheetTitle: {
+  title: {
     fontSize: 20,
     fontWeight: '700',
     color: '#1a1a1a',
-    marginBottom: 28,
   },
 
   label: {
@@ -180,7 +175,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     paddingHorizontal: 16,
     paddingVertical: 12,
-    marginBottom: 24,
+    marginBottom: 20,
     gap: 8,
   },
 
@@ -191,7 +186,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     fontSize: 15,
     color: '#1a1a1a',
-    marginBottom: 24,
+    marginBottom: 20,
   },
 
   addGenreChip: {
@@ -225,7 +220,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     paddingVertical: 17,
     alignItems: 'center',
-    marginTop: 32,
+    marginTop: 24,
   },
 
   saveButtonDisabled: {
