@@ -5,8 +5,7 @@ const Header = () => {
   return (
     <View style={styles.header}>
       <View style={styles.inner}>
-        <Ionicons name="timer-outline" size={20} color="white" />
-        <Text style={styles.title}>TomaReco</Text>
+        <Text style={styles.title}>とまレコ</Text>
       </View>
     </View>
   );
