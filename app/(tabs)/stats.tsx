@@ -204,43 +204,49 @@ export default function StatsScreen() {
       >
         {/* 今月のまとめ */}
         <Text style={styles.sectionTitle}>今月のまとめ</Text>
-        <View style={styles.cardGrid}>
-          <View style={styles.statCard}>
-            <Text style={styles.statValue}>{studyDays}</Text>
+        <View style={styles.card}>
+          <View style={styles.statRow}>
             <Text style={styles.statLabel}>学習日数</Text>
+            <Text style={styles.statValue}>{studyDays}<Text style={styles.statUnit}>日</Text></Text>
           </View>
-          <View style={styles.statCard}>
-            <Text style={styles.statValue}>{monthRecords.length}</Text>
+          <View style={styles.divider} />
+          <View style={styles.statRow}>
             <Text style={styles.statLabel}>記録数</Text>
+            <Text style={styles.statValue}>{monthRecords.length}<Text style={styles.statUnit}>件</Text></Text>
           </View>
-          <View style={styles.statCard}>
-            <Text style={[styles.statValue, styles.accentValue]}>{streak}</Text>
+          <View style={styles.divider} />
+          <View style={styles.statRow}>
             <Text style={styles.statLabel}>現在の連続</Text>
+            <Text style={[styles.statValue, styles.accentValue]}>{streak}<Text style={[styles.statUnit, styles.accentValue]}>日</Text></Text>
           </View>
-          <View style={styles.statCard}>
-            <Text style={styles.statValue}>{longestStreak}</Text>
+          <View style={styles.divider} />
+          <View style={styles.statRow}>
             <Text style={styles.statLabel}>最長連続</Text>
+            <Text style={styles.statValue}>{longestStreak}<Text style={styles.statUnit}>日</Text></Text>
           </View>
         </View>
 
         {/* 今までのまとめ */}
         <Text style={styles.sectionTitle}>今までのまとめ</Text>
-        <View style={styles.cardGrid}>
-          <View style={styles.statCard}>
-            <Text style={styles.statValue}>{totalStudyDays}</Text>
+        <View style={styles.card}>
+          <View style={styles.statRow}>
             <Text style={styles.statLabel}>総学習日数</Text>
+            <Text style={styles.statValue}>{totalStudyDays}<Text style={styles.statUnit}>日</Text></Text>
           </View>
-          <View style={styles.statCard}>
-            <Text style={styles.statValue}>{records.length}</Text>
+          <View style={styles.divider} />
+          <View style={styles.statRow}>
             <Text style={styles.statLabel}>総記録数</Text>
+            <Text style={styles.statValue}>{records.length}<Text style={styles.statUnit}>件</Text></Text>
           </View>
-          <View style={styles.statCard}>
-            <Text style={styles.statValue}>{longestStreak}</Text>
+          <View style={styles.divider} />
+          <View style={styles.statRow}>
             <Text style={styles.statLabel}>最長連続</Text>
+            <Text style={styles.statValue}>{longestStreak}<Text style={styles.statUnit}>日</Text></Text>
           </View>
-          <View style={styles.statCard}>
-            <Text style={styles.statValue}>{activeGenres}</Text>
+          <View style={styles.divider} />
+          <View style={styles.statRow}>
             <Text style={styles.statLabel}>ジャンル数</Text>
+            <Text style={styles.statValue}>{activeGenres}<Text style={styles.statUnit}>個</Text></Text>
           </View>
         </View>
 
@@ -390,36 +396,38 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
 
-  cardGrid: {
+  statRow: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 10,
-    marginBottom: 8,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 14,
   },
 
-  statCard: {
-    ...card,
-    width: '47.5%',
-    alignItems: 'center',
-    paddingVertical: 20,
+  divider: {
+    height: 1,
+    backgroundColor: '#f0f0f0',
+  },
+
+  statLabel: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#444',
   },
 
   statValue: {
-    fontSize: 32,
+    fontSize: 22,
     fontWeight: '800',
     color: '#1a1a1a',
-    lineHeight: 38,
+  },
+
+  statUnit: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#888',
   },
 
   accentValue: {
     color: '#ff6347',
-  },
-
-  statLabel: {
-    fontSize: 12,
-    color: '#888',
-    fontWeight: '500',
-    marginTop: 4,
   },
 
   card: {
