@@ -2,7 +2,11 @@ import { useAppContext } from '@/context/AppContext';
 import { StyleSheet, Text, View } from 'react-native';
 import DayCell from './DayCell';
 
-export default function Calendar() {
+type Props = {
+  onDoubleTap?: () => void;
+};
+
+export default function Calendar({ onDoubleTap }: Props) {
   const { calendarDays, records, setSelectedDay, year, month, selectedDay } =
     useAppContext();
   const today = new Date();
@@ -47,6 +51,7 @@ export default function Calendar() {
               isToday={isToday}
               isSelected={selectedDay === item.day}
               onPress={() => setSelectedDay(item.day)}
+              onDoubleTap={onDoubleTap}
             />
           );
         })}

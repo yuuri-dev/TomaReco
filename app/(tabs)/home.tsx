@@ -39,7 +39,7 @@ export default function HomeScreen() {
       <MonthHeader />
 
       <GestureDetector gesture={pan}>
-        <Calendar />
+        <Calendar onDoubleTap={() => setShowInput(true)} />
       </GestureDetector>
 
       <RecordList />
