@@ -5,7 +5,7 @@ import RecordList from '@/components/Record/RecordList';
 import { useAppContext } from '@/context/AppContext';
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 
 export default function HomeScreen() {
@@ -30,19 +30,26 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.streakCard}>
-        <Ionicons name="flame" size={20} color="#ff6347" />
-        <Text style={styles.streakCount}>{streak}</Text>
-        <Text style={styles.streakLabel}>日連続</Text>
-      </View>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.streakCard}>
+          <Ionicons name="flame" size={20} color="#ff6347" />
+          <Text style={styles.streakCount}>{streak}</Text>
+          <Text style={styles.streakLabel}>日連続</Text>
+        </View>
 
-      <MonthHeader />
+        <MonthHeader />
 
-      <GestureDetector gesture={pan}>
-        <Calendar onDoubleTap={() => setShowInput(true)} />
-      </GestureDetector>
+        <GestureDetector gesture={pan}>
+          <Calendar onDoubleTap={() => setShowInput(true)} />
+        </GestureDetector>
 
-      <RecordList />
+        <RecordList />
+
+        <View style={styles.fabSpacer} />
+      </ScrollView>
 
       <Pressable style={styles.addButton} onPress={() => setShowInput(true)}>
         <Ionicons name="add" size={32} color="white" />
@@ -56,9 +63,16 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#f5f5f5',
+  },
+
+  scrollContent: {
     paddingTop: 16,
     alignItems: 'center',
-    backgroundColor: '#f5f5f5',
+  },
+
+  fabSpacer: {
+    height: 100,
   },
 
   streakCard: {
