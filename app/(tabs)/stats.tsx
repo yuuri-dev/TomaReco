@@ -5,7 +5,7 @@ import { useShare } from '@/hooks/useShare';
 import { Record } from '@/type/record';
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
-import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 const tomatoImg = require('@/assets/images/tomato.jpg');
 const naegiImg = require('@/assets/images/naegi.jpg');
@@ -110,7 +110,7 @@ function PieChart({ data }: { data: GenreStat[] }) {
 const pieStyles = StyleSheet.create({
   wrapper: {
     alignItems: 'center',
-    paddingVertical: 16,
+    paddingVertical: 8,
     gap: 16,
   },
   legend: {
@@ -144,7 +144,7 @@ const pieStyles = StyleSheet.create({
 export default function StatsScreen() {
   const { records, genres, streak } = useAppContext();
   const { cardRef, shareCard } = useShare(streak);
-  const [showPie, setShowPie] = useState(false);
+  const [showPieModal, setShowPieModal] = useState(false);
 
   const today = new Date();
   const thisYear = today.getFullYear();
@@ -155,6 +155,13 @@ export default function StatsScreen() {
   );
   const studyDays = new Set(monthRecords.map((r) => r.day)).size;
   const longestStreak = calculateLongestStreak(records);
+
+  const totalStudyDays = new Set(
+    records.map((r) => `${r.year}-${r.month}-${r.day}`)
+  ).size;
+  const activeGenres = genres.filter((g) =>
+    records.some((r) => r.genreId === g.id)
+  ).length;
 
   const genreStats = genres
     .map((g) => ({
@@ -180,7 +187,6 @@ export default function StatsScreen() {
 
   return (
     <View style={{ flex: 1 }}>
-      {/* シェアカード（オフスクリーン描画用・常に描画済みにする） */}
       <View style={styles.offscreen} pointerEvents="none">
         <ViewShot ref={cardRef} options={{ format: 'png', quality: 1 }}>
           <ShareCard
@@ -191,100 +197,135 @@ export default function StatsScreen() {
         </ViewShot>
       </View>
 
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.content}
-      showsVerticalScrollIndicator={false}
-    >
-      {/* 今月のまとめ */}
-      <Text style={styles.sectionTitle}>今月のまとめ</Text>
-      <View style={styles.cardGrid}>
-        <View style={styles.statCard}>
-          <Text style={styles.statValue}>{studyDays}</Text>
-          <Text style={styles.statLabel}>学習日数</Text>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* 今月のまとめ */}
+        <Text style={styles.sectionTitle}>今月のまとめ</Text>
+        <View style={styles.cardGrid}>
+          <View style={styles.statCard}>
+            <Text style={styles.statValue}>{studyDays}</Text>
+            <Text style={styles.statLabel}>学習日数</Text>
+          </View>
+          <View style={styles.statCard}>
+            <Text style={styles.statValue}>{monthRecords.length}</Text>
+            <Text style={styles.statLabel}>記録数</Text>
+          </View>
+          <View style={styles.statCard}>
+            <Text style={[styles.statValue, styles.accentValue]}>{streak}</Text>
+            <Text style={styles.statLabel}>現在の連続</Text>
+          </View>
+          <View style={styles.statCard}>
+            <Text style={styles.statValue}>{longestStreak}</Text>
+            <Text style={styles.statLabel}>最長連続</Text>
+          </View>
         </View>
-        <View style={styles.statCard}>
-          <Text style={styles.statValue}>{monthRecords.length}</Text>
-          <Text style={styles.statLabel}>総記録数</Text>
-        </View>
-        <View style={styles.statCard}>
-          <Text style={[styles.statValue, styles.accentValue]}>{streak}</Text>
-          <Text style={styles.statLabel}>現在の連続</Text>
-        </View>
-        <View style={styles.statCard}>
-          <Text style={styles.statValue}>{longestStreak}</Text>
-          <Text style={styles.statLabel}>最長連続</Text>
-        </View>
-      </View>
 
-      {/* シェアボタン */}
-      <Pressable style={styles.shareButton} onPress={shareCard}>
-        <Ionicons name="share-social-outline" size={18} color="white" />
-        <Text style={styles.shareButtonText}>記録をシェア</Text>
-      </Pressable>
-
-      {/* 最近7日間 */}
-      <Text style={styles.sectionTitle}>最近7日間</Text>
-      <View style={styles.card}>
-        <View style={styles.weekRow}>
-          {last7.map(({ date, hasStudy, isToday }, i) => (
-            <View key={i} style={styles.dayItem}>
-              <Text style={[styles.dayLabel, isToday && styles.dayLabelToday]}>
-                {DAY_LABELS[date.getDay()]}
-              </Text>
-              <Image
-                source={hasStudy ? tomatoImg : naegiImg}
-                style={[styles.dayImg, !hasStudy && styles.dayImgNaegi]}
-              />
-              <Text style={[styles.dayDate, isToday && styles.dayDateToday]}>
-                {date.getDate()}
-              </Text>
-            </View>
-          ))}
+        {/* 今までのまとめ */}
+        <Text style={styles.sectionTitle}>今までのまとめ</Text>
+        <View style={styles.cardGrid}>
+          <View style={styles.statCard}>
+            <Text style={styles.statValue}>{totalStudyDays}</Text>
+            <Text style={styles.statLabel}>総学習日数</Text>
+          </View>
+          <View style={styles.statCard}>
+            <Text style={styles.statValue}>{records.length}</Text>
+            <Text style={styles.statLabel}>総記録数</Text>
+          </View>
+          <View style={styles.statCard}>
+            <Text style={styles.statValue}>{longestStreak}</Text>
+            <Text style={styles.statLabel}>最長連続</Text>
+          </View>
+          <View style={styles.statCard}>
+            <Text style={styles.statValue}>{activeGenres}</Text>
+            <Text style={styles.statLabel}>ジャンル数</Text>
+          </View>
         </View>
-      </View>
 
-      {/* ジャンル別 */}
-      <Pressable onPress={() => setShowPie((v) => !v)}>
-        <Text style={styles.sectionTitle}>
-          ジャンル別（全期間）{'  '}
-          <Text style={styles.sectionToggle}>{showPie ? 'バーグラフ ›' : '円グラフ ›'}</Text>
-        </Text>
-      </Pressable>
-      <View style={styles.card}>
-        {genreStats.length === 0 ? (
-          <Text style={styles.emptyText}>まだ記録がありません</Text>
-        ) : showPie ? (
-          <PieChart data={genreStats} />
-        ) : (
-          genreStats.map(({ genre, count }) => (
-            <View key={genre.id} style={styles.genreRow}>
-              <View style={styles.genreNameRow}>
-                <View
-                  style={[styles.genreDot, { backgroundColor: genre.color }]}
+        {/* シェアボタン */}
+        <Pressable style={styles.shareButton} onPress={shareCard}>
+          <Ionicons name="share-social-outline" size={18} color="white" />
+          <Text style={styles.shareButtonText}>記録をシェア</Text>
+        </Pressable>
+
+        {/* 最近7日間 */}
+        <Text style={styles.sectionTitle}>最近7日間</Text>
+        <View style={styles.card}>
+          <View style={styles.weekRow}>
+            {last7.map(({ date, hasStudy, isToday }, i) => (
+              <View key={i} style={styles.dayItem}>
+                <Text style={[styles.dayLabel, isToday && styles.dayLabelToday]}>
+                  {DAY_LABELS[date.getDay()]}
+                </Text>
+                <Image
+                  source={hasStudy ? tomatoImg : naegiImg}
+                  style={[styles.dayImg, !hasStudy && styles.dayImgNaegi]}
                 />
-                <Text style={styles.genreName}>{genre.name}</Text>
+                <Text style={[styles.dayDate, isToday && styles.dayDateToday]}>
+                  {date.getDate()}
+                </Text>
               </View>
-              <View style={styles.barRow}>
-                <View style={styles.barTrack}>
-                  <View
-                    style={[
-                      styles.barFill,
-                      {
-                        backgroundColor: genre.color,
-                        width: `${(count / maxCount) * 100}%`,
-                      },
-                    ]}
-                  />
+            ))}
+          </View>
+        </View>
+
+        {/* ジャンル別（タップで円グラフ表示） */}
+        <Text style={styles.sectionTitle}>ジャンル別（全期間）</Text>
+        <Pressable style={styles.card} onPress={() => genreStats.length > 0 && setShowPieModal(true)}>
+          {genreStats.length === 0 ? (
+            <Text style={styles.emptyText}>まだ記録がありません</Text>
+          ) : (
+            <>
+              {genreStats.map(({ genre, count }) => (
+                <View key={genre.id} style={styles.genreRow}>
+                  <View style={styles.genreNameRow}>
+                    <View style={[styles.genreDot, { backgroundColor: genre.color }]} />
+                    <Text style={styles.genreName}>{genre.name}</Text>
+                  </View>
+                  <View style={styles.barRow}>
+                    <View style={styles.barTrack}>
+                      <View
+                        style={[
+                          styles.barFill,
+                          {
+                            backgroundColor: genre.color,
+                            width: `${(count / maxCount) * 100}%`,
+                          },
+                        ]}
+                      />
+                    </View>
+                    <Text style={styles.genreCount}>{count}件</Text>
+                  </View>
                 </View>
-                <Text style={styles.genreCount}>{count}件</Text>
+              ))}
+              <View style={styles.tapHint}>
+                <Ionicons name="pie-chart-outline" size={13} color="#ccc" />
+                <Text style={styles.tapHintText}>タップで円グラフ</Text>
               </View>
+            </>
+          )}
+        </Pressable>
+      </ScrollView>
+
+      <AdBanner />
+
+      {/* 円グラフモーダル */}
+      <Modal visible={showPieModal} transparent animationType="fade" onRequestClose={() => setShowPieModal(false)}>
+        <View style={styles.modalOverlay}>
+          <Pressable style={StyleSheet.absoluteFill} onPress={() => setShowPieModal(false)} />
+          <View style={styles.modalDialog}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>ジャンル別（全期間）</Text>
+              <Pressable onPress={() => setShowPieModal(false)} hitSlop={12}>
+                <Ionicons name="close" size={22} color="#aaa" />
+              </Pressable>
             </View>
-          ))
-        )}
-      </View>
-    </ScrollView>
-    <AdBanner />
+            <PieChart data={genreStats} />
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -349,15 +390,6 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
 
-  sectionToggle: {
-    fontSize: 10,
-    fontWeight: '600',
-    color: '#ff6347',
-    textTransform: 'none',
-    letterSpacing: 0,
-  },
-
-  // --- 今月のまとめ ---
   cardGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -390,7 +422,6 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
 
-  // --- 最近7日間 ---
   card: {
     ...card,
     marginBottom: 8,
@@ -437,7 +468,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
 
-  // --- ジャンル別 ---
   emptyText: {
     textAlign: 'center',
     color: '#bbb',
@@ -493,5 +523,53 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     width: 30,
     textAlign: 'right',
+  },
+
+  tapHint: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 4,
+    marginTop: 4,
+  },
+
+  tapHintText: {
+    fontSize: 11,
+    color: '#ccc',
+    fontWeight: '500',
+  },
+
+  // --- 円グラフモーダル ---
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.45)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 24,
+  },
+
+  modalDialog: {
+    width: '100%',
+    backgroundColor: 'white',
+    borderRadius: 24,
+    padding: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.15,
+    shadowRadius: 24,
+    elevation: 10,
+  },
+
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#1a1a1a',
   },
 });
