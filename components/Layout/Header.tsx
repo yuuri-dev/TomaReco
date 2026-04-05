@@ -5,7 +5,7 @@ const Header = () => {
   return (
     <View style={styles.header}>
       <View style={styles.inner}>
-        <Text style={styles.title}>とまレコ</Text>
+        <Text style={styles.title}>TomaReco</Text>
       </View>
     </View>
   );
