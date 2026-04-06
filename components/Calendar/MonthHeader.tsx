@@ -27,43 +27,45 @@ export default function MonthHeader() {
 
   return (
     <View style={styles.monthHeader}>
-      <Pressable
-        style={({ pressed }) => [
-          styles.arrowButton,
-          pressed && { opacity: 0.6 },
-        ]}
-        onPress={() => changeMonth(-1)}
-      >
-        <Ionicons name="chevron-back" size={22} color="#333" />
-      </Pressable>
-
-      <Pressable
-        style={styles.monthContainer}
-        onPress={() => {
-          setTempMonth(month);
-          setTempYear(year);
-          setShowMonthPicker(true);
-        }}
-      >
-        <Text style={styles.monthText}>
-          {monthNames[month]} {year}
-        </Text>
-      </Pressable>
-
-      <Pressable
-        style={({ pressed }) => [
-          styles.arrowButton,
-          pressed && { opacity: 0.6 },
-        ]}
-        onPress={() => changeMonth(1)}
-      >
-        <Ionicons name="chevron-forward" size={22} color="#333" />
-      </Pressable>
-
       {/* 今日ボタン */}
       <Pressable style={styles.todayButton} onPress={goToday}>
         <Text style={styles.todayText}>Today</Text>
       </Pressable>
+
+      <View style={styles.navGroup}>
+        <Pressable
+          style={({ pressed }) => [
+            styles.arrowButton,
+            pressed && { opacity: 0.6 },
+          ]}
+          onPress={() => changeMonth(-1)}
+        >
+          <Ionicons name="chevron-back" size={22} color="#333" />
+        </Pressable>
+
+        <Pressable
+          style={styles.monthContainer}
+          onPress={() => {
+            setTempMonth(month);
+            setTempYear(year);
+            setShowMonthPicker(true);
+          }}
+        >
+          <Text style={styles.monthText}>
+            {monthNames[month]} {year}
+          </Text>
+        </Pressable>
+
+        <Pressable
+          style={({ pressed }) => [
+            styles.arrowButton,
+            pressed && { opacity: 0.6 },
+          ]}
+          onPress={() => changeMonth(1)}
+        >
+          <Ionicons name="chevron-forward" size={22} color="#333" />
+        </Pressable>
+      </View>
 
       <Modal visible={showMonthPicker} transparent animationType="fade">
         <View style={styles.modalOverlay}>
@@ -159,40 +161,42 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 
-  monthContainer: {
-    flex: 1,
+  navGroup: {
+    flexDirection: 'row',
     alignItems: 'center',
+    gap: 4,
+  },
+
+  monthContainer: {
+    alignItems: 'center',
+    paddingHorizontal: 8,
   },
 
   monthText: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: 17,
+    fontWeight: '700',
+    color: '#1a1a1a',
   },
 
   arrowButton: {
-    width: 40,
-    height: 40,
+    width: 36,
+    height: 36,
     borderRadius: 10,
     backgroundColor: '#f3f3f3',
     justifyContent: 'center',
     alignItems: 'center',
   },
 
-  arrow: {
-    fontSize: 22,
-    fontWeight: '600',
-  },
   todayButton: {
-    marginLeft: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 8,
-    backgroundColor: '#ff6347',
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: 10,
+    backgroundColor: '#fff0ee',
   },
 
   todayText: {
-    color: 'white',
-    fontWeight: '600',
-    fontSize: 12,
+    color: '#ff6347',
+    fontWeight: '700',
+    fontSize: 13,
   },
 });
