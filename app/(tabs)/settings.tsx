@@ -5,7 +5,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import { Linking, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 
 type RowProps = {
   label: string;
@@ -72,7 +72,7 @@ export default function SettingsScreen() {
           icon="code-slash-outline"
           iconColor="#4a8fe8"
           label="バージョン"
-          value="1.0.0"
+          value="1.3"
         />
       </View>
 
@@ -157,6 +157,20 @@ export default function SettingsScreen() {
           iconColor="#ff6347"
           label="初めての方へ"
           onPress={() => router.push('/onboarding?from=settings')}
+        />
+        <View style={styles.divider} />
+        <SettingRow
+          icon="star-outline"
+          iconColor="#f5a623"
+          label="レビューを書く"
+          onPress={() => Linking.openURL('itms-apps://itunes.apple.com/app/id6760455427?action=write-review')}
+        />
+        <View style={styles.divider} />
+        <SettingRow
+          icon="mail-outline"
+          iconColor="#4a8fe8"
+          label="お問い合わせ"
+          onPress={() => Linking.openURL('https://yuuri-dev.github.io/tomareco-lp/support')}
         />
       </View>
 
