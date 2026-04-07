@@ -5,11 +5,11 @@ import RecordList from '@/components/Record/RecordList';
 import { useAppContext } from '@/context/AppContext';
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 
 export default function HomeScreen() {
-  const { streak, changeMonth, isLoading } = useAppContext();
+  const { changeMonth, isLoading } = useAppContext();
   const [showInput, setShowInput] = useState(false);
 
   const pan = Gesture.Pan()
@@ -34,12 +34,6 @@ export default function HomeScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.streakCard}>
-          <Ionicons name="flame" size={20} color="#ff6347" />
-          <Text style={styles.streakCount}>{streak}</Text>
-          <Text style={styles.streakLabel}>日連続</Text>
-        </View>
-
         <MonthHeader />
 
         <GestureDetector gesture={pan}>
@@ -73,34 +67,6 @@ const styles = StyleSheet.create({
 
   fabSpacer: {
     height: 100,
-  },
-
-  streakCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'white',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    marginBottom: 12,
-    gap: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-
-  streakCount: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#1a1a1a',
-  },
-
-  streakLabel: {
-    fontSize: 13,
-    color: '#888',
-    fontWeight: '500',
   },
 
   addButton: {
