@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
 const tomatoImg = require('@/assets/images/tomato.jpg');
@@ -9,13 +10,25 @@ type Props = {
   isToday: boolean;
   isSelected: boolean;
   onPress: () => void;
+  onDoubleTap?: () => void;
 };
 
-export default function DayCell({ day, hasStudy, isToday, isSelected, onPress }: Props) {
+export default function DayCell({ day, hasStudy, isToday, isSelected, onPress, onDoubleTap }: Props) {
+  const lastTapRef = useRef(0);
+
+  const handlePress = () => {
+    onPress();
+    const now = Date.now();
+    if (now - lastTapRef.current < 300) {
+      onDoubleTap?.();
+    }
+    lastTapRef.current = now;
+  };
+
   return (
     <Pressable
       style={[styles.day, isSelected && styles.selected]}
-      onPress={onPress}
+      onPress={handlePress}
     >
       <View style={[styles.dateCircle, isToday && styles.todayCircle]}>
         <Text style={[styles.date, isToday && styles.todayText]}>{day}</Text>
