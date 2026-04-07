@@ -16,7 +16,7 @@ type RowProps = {
   danger?: boolean;
 };
 
-function SettingRow({ label, value, icon, iconColor = '#888', onPress, danger }: RowProps) {
+function ActionRow({ label, value, icon, iconColor = '#888', onPress, danger }: RowProps) {
   return (
     <Pressable
       style={({ pressed }) => [styles.row, pressed && onPress && styles.rowPressed]}
@@ -49,6 +49,10 @@ export default function SettingsScreen() {
 
   const [editingGenre, setEditingGenre] = useState<Genre | null>(null);
 
+  const handleReview = () => {
+    Linking.openURL('itms-apps://itunes.apple.com/app/id6760455427?action=write-review');
+  };
+
   const notifDate = new Date();
   notifDate.setHours(notificationTime.hour, notificationTime.minute, 0, 0);
 
@@ -61,14 +65,14 @@ export default function SettingsScreen() {
       {/* アプリについて */}
       <Text style={styles.sectionTitle}>アプリについて</Text>
       <View style={styles.card}>
-        <SettingRow
+        <ActionRow
           icon="timer-outline"
           iconColor="#ff6347"
           label="TomaReco"
           value="学習記録アプリ"
         />
         <View style={styles.divider} />
-        <SettingRow
+        <ActionRow
           icon="code-slash-outline"
           iconColor="#4a8fe8"
           label="バージョン"
@@ -152,21 +156,21 @@ export default function SettingsScreen() {
       {/* ヘルプ */}
       <Text style={styles.sectionTitle}>ヘルプ</Text>
       <View style={styles.card}>
-        <SettingRow
+        <ActionRow
           icon="information-circle-outline"
           iconColor="#ff6347"
           label="初めての方へ"
           onPress={() => router.push('/onboarding?from=settings')}
         />
         <View style={styles.divider} />
-        <SettingRow
+        <ActionRow
           icon="star-outline"
-          iconColor="#f5a623"
+          iconColor="#FFCC00"
           label="レビューを書く"
-          onPress={() => Linking.openURL('itms-apps://itunes.apple.com/app/id6760455427?action=write-review')}
+          onPress={handleReview}
         />
         <View style={styles.divider} />
-        <SettingRow
+        <ActionRow
           icon="mail-outline"
           iconColor="#4a8fe8"
           label="お問い合わせ"
@@ -177,7 +181,7 @@ export default function SettingsScreen() {
       {/* データ管理 */}
       <Text style={styles.sectionTitle}>データ管理</Text>
       <View style={styles.card}>
-        <SettingRow
+        <ActionRow
           icon="trash-outline"
           iconColor="#e05555"
           label="すべてのデータを削除"
