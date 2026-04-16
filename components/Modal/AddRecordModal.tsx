@@ -3,7 +3,9 @@ import { Ionicons } from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useState } from 'react';
 import {
+  KeyboardAvoidingView,
   Modal,
+  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -41,6 +43,10 @@ export default function AddRecordModal({ visible, close }: Props) {
 
   return (
     <Modal visible={visible} transparent animationType="fade">
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
       <View style={styles.overlay}>
         <Pressable style={StyleSheet.absoluteFill} onPress={close} />
 
@@ -121,6 +127,7 @@ export default function AddRecordModal({ visible, close }: Props) {
           )}
         </View>
       </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }
