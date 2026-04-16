@@ -3,7 +3,9 @@ import { Genre } from '@/type/genre';
 import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
 import {
+  KeyboardAvoidingView,
   Modal,
+  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -45,6 +47,10 @@ export default function EditGenreModal({ genre, onClose }: Props) {
 
   return (
     <Modal visible={!!genre} transparent animationType="fade" onRequestClose={onClose}>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
       <View style={styles.overlay}>
         <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
 
@@ -97,6 +103,7 @@ export default function EditGenreModal({ genre, onClose }: Props) {
           </Pressable>
         </View>
       </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }

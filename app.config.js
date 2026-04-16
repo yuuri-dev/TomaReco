@@ -10,7 +10,7 @@ export default {
       resizeMode: 'contain',
       backgroundColor: '#ff6347',
     },
-    version: '1.3',
+    version: '1.4',
     orientation: 'portrait',
     scheme: 'tomareco',
     userInterfaceStyle: 'automatic',
@@ -19,6 +19,8 @@ export default {
       bundleIdentifier: 'com.tomareco.app',
       infoPlist: {
         ITSAppUsesNonExemptEncryption: false,
+        NSUserTrackingUsageDescription:
+          'より関連性の高い広告を表示するために使用します。',
       },
     },
     plugins: [
