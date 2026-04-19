@@ -10,7 +10,7 @@ export default {
       resizeMode: 'contain',
       backgroundColor: '#ff6347',
     },
-    version: '1.4',
+    version: '1.5',
     orientation: 'portrait',
     scheme: 'tomareco',
     userInterfaceStyle: 'automatic',
