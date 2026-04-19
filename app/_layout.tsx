@@ -15,14 +15,6 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 SplashScreen.preventAutoHideAsync();
 
-// AdMob SDK 初期化（ネイティブビルドのみ）
-try {
-  const { default: mobileAds } = require('react-native-google-mobile-ads');
-  mobileAds().initialize();
-} catch {
-  // Expo Go / ネイティブ未登録環境では無視
-}
-
 export default function RootLayout() {
   const [showCustomSplash, setShowCustomSplash] = useState(true);
 
@@ -30,16 +22,26 @@ export default function RootLayout() {
   const scale = useSharedValue(0.3);
 
   useEffect(() => {
-    // iOS: ATT 許可リクエスト（パーソナライズ広告のため）
-    if (Platform.OS === 'ios') {
+    async function initAds() {
+      // 1. iOS: ATT 許可リクエスト（先に取得してからAdMobを初期化する）
+      if (Platform.OS === 'ios') {
+        try {
+          const { requestTrackingPermissionsAsync } = require('expo-tracking-transparency');
+          await requestTrackingPermissionsAsync();
+        } catch {
+          // パッケージ未導入の場合は無視
+        }
+      }
+      // 2. ATT取得後にAdMob SDK を初期化
       try {
-        const { requestTrackingPermissionsAsync } = require('expo-tracking-transparency');
-        requestTrackingPermissionsAsync();
+        const { default: mobileAds } = require('react-native-google-mobile-ads');
+        await mobileAds().initialize();
       } catch {
-        // パッケージ未導入の場合は無視
+        // ネイティブ未登録環境では無視
       }
     }
 
+    initAds();
     SplashScreen.hideAsync();
 
     // フェードイン + バウンス

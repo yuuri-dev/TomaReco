@@ -36,8 +36,10 @@ export default {
       [
         'react-native-google-mobile-ads',
         {
-          androidAppId: process.env.ADMOB_APP_ID ?? '',
-          iosAppId: process.env.ADMOB_APP_ID ?? '',
+          androidAppId:
+            process.env.ADMOB_ANDROID_APP_ID ?? process.env.ADMOB_APP_ID ?? '',
+          iosAppId:
+            process.env.ADMOB_IOS_APP_ID ?? process.env.ADMOB_APP_ID ?? '',
         },
       ],
     ],
@@ -45,7 +47,10 @@ export default {
       package: 'com.anonymous.tomatostudy',
     },
     extra: {
-      admobBannerId: process.env.ADMOB_BANNER_ID ?? '',
+      admobBannerId:
+        process.env.EXPO_PUBLIC_ADMOB_BANNER_ID ??
+        process.env.ADMOB_BANNER_ID ??
+        '',
       router: {},
       eas: {
         projectId: 'e6136588-90f2-47d9-8b7f-dc1b74180cf3',

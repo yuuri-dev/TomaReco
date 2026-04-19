@@ -18,7 +18,14 @@ try {
 
 const adUnitId = __DEV__
   ? (testAdUnitId ?? '')
-  : (Constants.expoConfig?.extra?.admobBannerId ?? '');
+  : (
+      process.env.EXPO_PUBLIC_ADMOB_BANNER_ID ??
+      Constants.expoConfig?.extra?.admobBannerId ??
+      // EAS Update / standalone build で expoConfig が null の場合のフォールバック
+      (Constants as any).manifest2?.extra?.expoClient?.admobBannerId ??
+      (Constants as any).manifest?.extra?.admobBannerId ??
+      ''
+    );
 
 export default function AdBanner() {
   if (!NativeBannerAd || !BannerAdSizeValue || !adUnitId) return <View />;
@@ -27,6 +34,11 @@ export default function AdBanner() {
     <NativeBannerAd
       unitId={adUnitId}
       size={BannerAdSizeValue}
+      onAdFailedToLoad={(error: { code?: string; message?: string }) => {
+        console.warn(
+          `[AdBanner] failed to load banner. unitId=${adUnitId}, code=${error?.code ?? 'unknown'}, message=${error?.message ?? 'unknown'}`
+        );
+      }}
     />
   );
 }
