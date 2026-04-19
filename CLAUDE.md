@@ -129,3 +129,28 @@ eas submit --platform ios --latest  # ターミナルで直接実行（認証が
 | `version is not accepted` で submit 失敗 | `app.config.js` のバージョンが古い | `version` を上げて再ビルド |
 | クラッシュ（AdMob） | EAS に `ADMOB_APP_ID` が未登録 | `eas env:create` で登録後再ビルド |
 | `RNGoogleMobileAdsModule could not be found` | Expo Go で実行している | EAS Build した実機バイナリで確認する |
+
+---
+
+## 広告デバッグ（未解決・2026-04-19 時点）
+
+### 状況
+- v1.5（build 19）をTestFlightにサブミット済みだが広告が表示されない
+- AdMobダッシュボードはステータス「準備完了」
+
+### これまでの修正内容
+1. **`BannerAd.tsx`** — 広告ID取得を多段フォールバック化（`EXPO_PUBLIC_ADMOB_BANNER_ID` → `expoConfig.extra` → manifest系）
+2. **`_layout.tsx`** — ATT許可取得 → AdMob初期化の順序修正（以前は逆順だった）
+3. **EAS環境変数** — `EXPO_PUBLIC_ADMOB_BANNER_ID` を production に Plain text で登録済み
+
+### 現在の仮説
+- 新規アプリのためAdMobの広告フィル率が低い（数日〜数週間で改善することがある）
+- `BannerAd.tsx` に `console.warn` デバッグログを追加済みだが、EAS無料プランのビルド上限（月次）に達して検証できていない
+
+### 5月1日以降にやること
+1. `eas build --platform ios --profile development` で開発ビルドを作成（端末登録済み）
+2. Xcodeコンソールで `AdBanner` を検索してログを確認
+3. ログ: `[AdBanner] NativeBannerAd: true/false, size: true/false, unitId: xxx`
+   - どれかが false/空 → コードの問題
+   - 全部 true → AdMobのフィル率の問題（しばらく待つ）
+4. 確認後 `console.warn` デバッグログは削除する（`components/Ads/BannerAd.tsx:31`）
