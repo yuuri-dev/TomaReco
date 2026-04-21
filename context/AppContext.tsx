@@ -6,7 +6,7 @@ import {
   scheduleDailyReminder,
 } from '@/utils/notification';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Alert } from 'react-native';
 
 const DATA_KEY = DATA_KEY;
@@ -128,22 +128,33 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     load();
   }, []);
 
+  const isSavingRef = useRef(false);
+  const pendingSaveRef = useRef<{ records: Record[]; genres: Genre[] } | null>(null);
+
+  const flushSave = useCallback(async (data: { records: Record[]; genres: Genre[] }) => {
+    if (isSavingRef.current) {
+      pendingSaveRef.current = data;
+      return;
+    }
+    isSavingRef.current = true;
+    try {
+      await AsyncStorage.setItem(DATA_KEY, JSON.stringify(data));
+    } catch {
+      Alert.alert('エラー', 'データの保存に失敗しました');
+    } finally {
+      isSavingRef.current = false;
+      if (pendingSaveRef.current) {
+        const next = pendingSaveRef.current;
+        pendingSaveRef.current = null;
+        flushSave(next);
+      }
+    }
+  }, []);
+
   useEffect(() => {
     if (isLoading) return;
-
-    const save = async () => {
-      try {
-        await AsyncStorage.setItem(
-          DATA_KEY,
-          JSON.stringify({ records, genres })
-        );
-      } catch {
-        Alert.alert('エラー', 'データの保存に失敗しました');
-      }
-    };
-
-    save();
-  }, [records, genres, isLoading]);
+    flushSave({ records, genres });
+  }, [records, genres, isLoading, flushSave]);
 
   function changeMonth(diff: number) {
     setCurrentDate((prev) => {
