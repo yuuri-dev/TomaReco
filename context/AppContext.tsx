@@ -162,6 +162,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       next.setMonth(prev.getMonth() + diff);
       return next;
     });
+    setSelectedDay((prev) => {
+      const nextDate = new Date(year, month + diff + 1, 0);
+      const maxDay = nextDate.getDate();
+      return Math.min(prev, maxDay);
+    });
   }
 
   function goToday() {
