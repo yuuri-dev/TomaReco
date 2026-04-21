@@ -9,6 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { Alert } from 'react-native';
 
+const DATA_KEY = DATA_KEY;
 const NOTIFICATION_KEY = 'tomato-notification';
 
 const defaultGenres: Genre[] = [
@@ -87,7 +88,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const load = async () => {
       try {
-        const json = await AsyncStorage.getItem('tomato-data');
+        const json = await AsyncStorage.getItem(DATA_KEY);
 
         if (json !== null) {
           const data = JSON.parse(json);
@@ -133,7 +134,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     const save = async () => {
       try {
         await AsyncStorage.setItem(
-          'tomato-data',
+          DATA_KEY,
           JSON.stringify({ records, genres })
         );
       } catch {
@@ -252,7 +253,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           onPress: async () => {
             setRecords([]);
             setGenres(defaultGenres);
-            await AsyncStorage.removeItem('tomato-data');
+            await AsyncStorage.removeItem(DATA_KEY);
           },
         },
       ]
