@@ -15,5 +15,5 @@ export default function Index() {
   }, []);
 
   if (!target) return <View style={{ flex: 1, backgroundColor: '#fff' }} />;
-  return <Redirect href={target as any} />;
+  return <Redirect href={target as '/home' | '/onboarding'} />;
 }
