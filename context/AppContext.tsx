@@ -211,6 +211,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }
 
   function deleteGenre(id: string) {
+    if (genres.length <= 1) {
+      Alert.alert('削除できません', 'ジャンルは1つ以上必要です');
+      return;
+    }
     Alert.alert('ジャンル削除', '削除しますか？', [
       { text: 'キャンセル', style: 'cancel' },
       {
