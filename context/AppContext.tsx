@@ -262,9 +262,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           text: '削除する',
           style: 'destructive',
           onPress: async () => {
-            setRecords([]);
-            setGenres(defaultGenres);
-            await AsyncStorage.removeItem(DATA_KEY);
+            try {
+              await AsyncStorage.removeItem(DATA_KEY);
+              setRecords([]);
+              setGenres(defaultGenres);
+            } catch {
+              Alert.alert('エラー', 'データの削除に失敗しました');
+            }
           },
         },
       ]
