@@ -3,6 +3,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useRef, useState } from 'react';
 import {
+  Alert,
   Dimensions,
   FlatList,
   Pressable,
@@ -81,7 +82,12 @@ export default function OnboardingScreen() {
 
   const finish = async () => {
     if (!fromSettings) {
-      await AsyncStorage.setItem(ONBOARDING_KEY, 'true');
+      try {
+        await AsyncStorage.setItem(ONBOARDING_KEY, 'true');
+      } catch {
+        Alert.alert('エラー', '設定の保存に失敗しました');
+        return;
+      }
     }
     router.replace('/home');
   };
