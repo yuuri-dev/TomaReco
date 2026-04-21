@@ -92,19 +92,21 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           const data = JSON.parse(json);
 
           type PersistedRecord = Omit<Record, 'id'> & { id?: string };
-          const loadedRecords: Record[] = (data.records || []).map(
+          const rawRecords = Array.isArray(data.records) ? data.records : [];
+          const loadedRecords: Record[] = rawRecords.map(
             (r: PersistedRecord): Record => ({
               id: r.id ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`,
-              year: r.year,
-              month: r.month,
-              day: r.day,
-              title: r.title,
-              genreId: r.genreId,
+              year: Number(r.year),
+              month: Number(r.month),
+              day: Number(r.day),
+              title: String(r.title ?? ''),
+              genreId: String(r.genreId ?? ''),
             })
           );
 
+          const rawGenres = Array.isArray(data.genres) ? data.genres : null;
           setRecords(loadedRecords);
-          setGenres(data.genres || defaultGenres);
+          setGenres(rawGenres ?? defaultGenres);
         }
 
         const notifJson = await AsyncStorage.getItem(NOTIFICATION_KEY);
