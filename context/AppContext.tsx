@@ -191,9 +191,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }
 
   function saveGenre(name: string, color: string) {
+    const trimmed = name.trim();
+    if (!trimmed) return;
     const newGenre: Genre = {
       id: Date.now().toString(),
-      name,
+      name: trimmed,
       color,
     };
     setGenres((prev) => [...prev, newGenre]);
