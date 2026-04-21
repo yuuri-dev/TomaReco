@@ -216,7 +216,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       {
         text: '削除',
         style: 'destructive',
-        onPress: () => setGenres((prev) => prev.filter((g) => g.id !== id)),
+        onPress: () => {
+          if (selectedGenreId === id) {
+            const next = genres.find((g) => g.id !== id);
+            if (next) setSelectedGenreId(next.id);
+          }
+          setGenres((prev) => prev.filter((g) => g.id !== id));
+        },
       },
     ]);
   }
