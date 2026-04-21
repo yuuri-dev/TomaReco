@@ -6,7 +6,7 @@ import {
   scheduleDailyReminder,
 } from '@/utils/notification';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { Alert } from 'react-native';
 
 const DATA_KEY = DATA_KEY;
@@ -71,19 +71,17 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     ...days,
   ];
 
-  function calculateStreak(recs: Record[]) {
-    const dates = recs.map((r) => new Date(r.year, r.month, r.day).toDateString());
-    const uniqueDates = [...new Set(dates)];
-    let streak = 0;
+  const streak = useMemo(() => {
+    const dates = records.map((r) => new Date(r.year, r.month, r.day).toDateString());
+    const uniqueDates = new Set(dates);
+    let count = 0;
     const current = new Date();
-    while (uniqueDates.includes(current.toDateString())) {
-      streak++;
+    while (uniqueDates.has(current.toDateString())) {
+      count++;
       current.setDate(current.getDate() - 1);
     }
-    return streak;
-  }
-
-  const streak = calculateStreak(records);
+    return count;
+  }, [records]);
 
   useEffect(() => {
     const load = async () => {
