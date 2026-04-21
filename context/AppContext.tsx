@@ -9,7 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Alert } from 'react-native';
 
-const DATA_KEY = DATA_KEY;
+const DATA_KEY = 'tomato-data';
 const NOTIFICATION_KEY = 'tomato-notification';
 
 const defaultGenres: Genre[] = [
