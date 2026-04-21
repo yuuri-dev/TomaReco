@@ -177,11 +177,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   function saveRecord(title: string) {
     const genre = genres.find((g) => g.id === selectedGenreId);
+    const maxDay = new Date(year, month + 1, 0).getDate();
+    const safeDay = Math.min(selectedDay, maxDay);
     const newRecord: Record = {
       id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
       year,
       month,
-      day: selectedDay,
+      day: safeDay,
       title: title.trim() || (genre ? `${genre.name}の学習` : '学習'),
       genreId: selectedGenreId,
     };
