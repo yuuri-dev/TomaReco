@@ -15,14 +15,20 @@ type Props = {
 
 export default function DayCell({ day, hasStudy, isToday, isSelected, onPress, onDoubleTap }: Props) {
   const lastTapRef = useRef(0);
+  const doubleTapFiredRef = useRef(false);
 
   const handlePress = () => {
     onPress();
     const now = Date.now();
-    if (now - lastTapRef.current < 300) {
+    const delta = now - lastTapRef.current;
+    if (delta < 300 && !doubleTapFiredRef.current) {
+      doubleTapFiredRef.current = true;
       onDoubleTap?.();
+      lastTapRef.current = 0;
+    } else {
+      doubleTapFiredRef.current = false;
+      lastTapRef.current = now;
     }
-    lastTapRef.current = now;
   };
 
   return (
