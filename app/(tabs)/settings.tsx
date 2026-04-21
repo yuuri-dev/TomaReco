@@ -6,7 +6,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Linking, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import { Linking, Platform, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 
 export default function SettingsScreen() {
   const {
@@ -22,7 +22,10 @@ export default function SettingsScreen() {
   const [editingGenre, setEditingGenre] = useState<Genre | null>(null);
 
   const handleReview = () => {
-    Linking.openURL('itms-apps://itunes.apple.com/app/id6760455427?action=write-review');
+    const url = Platform.OS === 'ios'
+      ? 'itms-apps://itunes.apple.com/app/id6760455427?action=write-review'
+      : 'https://apps.apple.com/jp/app/tomareco/id6760455427';
+    Linking.openURL(url);
   };
 
   const notifDate = new Date();
