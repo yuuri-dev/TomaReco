@@ -5,6 +5,7 @@ import {
   requestNotificationPermission,
   scheduleDailyReminder,
 } from '@/utils/notification';
+import { calculateXP, getLevelInfo, LevelInfo } from '@/utils/level';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Alert } from 'react-native';
@@ -31,6 +32,7 @@ type AppContextType = {
   month: number;
   calendarDays: ({ day: number } | null)[];
   streak: number;
+  levelInfo: LevelInfo;
   isLoading: boolean;
   saveRecord: (title: string) => void;
   saveGenre: (name: string, color: string) => void;
@@ -70,6 +72,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     ...Array(firstDay).fill(null),
     ...days,
   ];
+
+  const levelInfo = useMemo(() => getLevelInfo(calculateXP(records)), [records]);
 
   const streak = useMemo(() => {
     const dates = records.map((r) => new Date(r.year, r.month, r.day).toDateString());
@@ -309,6 +313,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         month,
         calendarDays,
         streak,
+        levelInfo,
         isLoading,
         saveRecord,
         saveGenre,
