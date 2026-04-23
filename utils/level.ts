@@ -63,6 +63,13 @@ export type LevelInfo = {
   xpToNext: number | null;
 };
 
+// Lv.1-2: 緑トマト、Lv.3-4: 普通のトマト、Lv.5+: 冠トマト
+export function getTomatoImage(level: number) {
+  if (level >= 5) return require('@/assets/images/tomato_crown.jpg');
+  if (level >= 3) return require('@/assets/images/tomato.jpg');
+  return require('@/assets/images/tomato_green.jpg');
+}
+
 export function getLevelInfo(xp: number): LevelInfo {
   const level = xpToLevel(xp);
   const currentThreshold = LEVEL_THRESHOLDS[level - 1] ?? 0;
