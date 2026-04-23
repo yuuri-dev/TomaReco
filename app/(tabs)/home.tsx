@@ -5,11 +5,11 @@ import RecordList from '@/components/Record/RecordList';
 import { useAppContext } from '@/context/AppContext';
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 
 export default function HomeScreen() {
-  const { changeMonth, isLoading, levelInfo } = useAppContext();
+  const { changeMonth, isLoading } = useAppContext();
   const [showInput, setShowInput] = useState(false);
 
   const pan = Gesture.Pan()
@@ -47,9 +47,6 @@ export default function HomeScreen() {
 
       <Pressable style={styles.addButton} onPress={() => setShowInput(true)}>
         <Ionicons name="add" size={32} color="white" />
-        <View style={styles.levelBadge}>
-          <Text style={styles.levelText}>Lv.{levelInfo.level}</Text>
-        </View>
       </Pressable>
 
       <AddRecordModal visible={showInput} close={() => setShowInput(false)} />
@@ -87,24 +84,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.35,
     shadowRadius: 8,
     elevation: 6,
-  },
-
-  levelBadge: {
-    position: 'absolute',
-    top: -6,
-    left: -6,
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    paddingHorizontal: 5,
-    paddingVertical: 1,
-    borderWidth: 1.5,
-    borderColor: '#ff6347',
-  },
-
-  levelText: {
-    fontSize: 10,
-    fontWeight: '700',
-    color: '#ff6347',
   },
 
   loadingContainer: {
