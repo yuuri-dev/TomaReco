@@ -1,3 +1,4 @@
+import { getTomatoImage } from '@/utils/level';
 import { useEffect } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import Animated, {
@@ -8,8 +9,6 @@ import Animated, {
   withSequence,
   withTiming,
 } from 'react-native-reanimated';
-
-const tomatoImg = require('@/assets/images/tomato.jpg');
 
 type Props = {
   level: number;
@@ -47,7 +46,7 @@ export default function XPToast({ level, xpInLevel, xpToNext, xpGained, visible,
 
   return (
     <Animated.View style={[styles.container, animStyle]} pointerEvents="none">
-      <Image source={tomatoImg} style={styles.icon} />
+      <Image source={getTomatoImage(level)} style={styles.icon} />
       <View style={styles.content}>
         <View style={styles.row}>
           <Text style={styles.level}>Lv.{level}</Text>
