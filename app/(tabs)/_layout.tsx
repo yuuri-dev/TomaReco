@@ -1,9 +1,13 @@
 import Header from '@/components/Layout/Header';
+import { useAppContext } from '@/context/AppContext';
+import { getTomatoImage } from '@/utils/level';
 import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
-import { View } from 'react-native';
+import { Image, View } from 'react-native';
 
 export default function TabsLayout() {
+  const { levelInfo } = useAppContext();
+
   return (
     <View style={{ flex: 1 }}>
       <Header />
@@ -38,6 +42,18 @@ export default function TabsLayout() {
             title: '統計',
             tabBarIcon: ({ color, size, focused }) => (
               <Ionicons name={focused ? 'bar-chart' : 'bar-chart-outline'} size={size} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="tomato"
+          options={{
+            title: 'トマト',
+            tabBarIcon: ({ size, focused }) => (
+              <Image
+                source={getTomatoImage(levelInfo.level)}
+                style={{ width: size, height: size, borderRadius: size / 2, opacity: focused ? 1 : 0.5 }}
+              />
             ),
           }}
         />
