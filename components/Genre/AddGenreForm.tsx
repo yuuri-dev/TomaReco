@@ -75,9 +75,9 @@ export default function AddGenreForm({
       </View>
 
       <Pressable
-        style={[styles.saveButton, !newGenreName && styles.saveButtonDisabled]}
+        style={[styles.saveButton, !newGenreName.trim() && styles.saveButtonDisabled]}
         onPress={onSave}
-        disabled={!newGenreName}
+        disabled={!newGenreName.trim()}
       >
         <Text style={styles.saveText}>追加する</Text>
       </Pressable>

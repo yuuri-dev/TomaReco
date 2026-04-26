@@ -2,7 +2,7 @@ import { AppProvider } from '@/context/AppContext';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useRef, useState } from 'react';
-import { Platform, StyleSheet, View } from 'react-native';
+import { NativeModules, Platform, StyleSheet, View } from 'react-native';
 import Animated, {
   runOnJS,
   useAnimatedStyle,
@@ -24,13 +24,9 @@ export default function RootLayout() {
   useEffect(() => {
     async function initAds() {
       // 1. iOS: ATT 許可リクエスト（先に取得してからAdMobを初期化する）
-      if (Platform.OS === 'ios') {
-        try {
-          const { requestTrackingPermissionsAsync } = require('expo-tracking-transparency');
-          await requestTrackingPermissionsAsync();
-        } catch {
-          // パッケージ未導入の場合は無視
-        }
+      if (Platform.OS === 'ios' && NativeModules.ExpoTrackingTransparency) {
+        const { requestTrackingPermissionsAsync } = require('expo-tracking-transparency');
+        await requestTrackingPermissionsAsync();
       }
       // 2. ATT取得後にAdMob SDK を初期化
       try {

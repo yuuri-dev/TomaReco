@@ -28,7 +28,6 @@ const adUnitId = __DEV__
     );
 
 export default function AdBanner() {
-  console.warn('[AdBanner] NativeBannerAd:', !!NativeBannerAd, 'size:', !!BannerAdSizeValue, 'unitId:', adUnitId);
   if (!NativeBannerAd || !BannerAdSizeValue || !adUnitId) return <View />;
 
   return (

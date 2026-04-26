@@ -1,16 +1,26 @@
 import Calendar from '@/components/Calendar/Calendar';
 import MonthHeader from '@/components/Calendar/MonthHeader';
+import XPToast from '@/components/Level/XPToast';
 import AddRecordModal from '@/components/Modal/AddRecordModal';
 import RecordList from '@/components/Record/RecordList';
 import { useAppContext } from '@/context/AppContext';
 import { Ionicons } from '@expo/vector-icons';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 
 export default function HomeScreen() {
-  const { changeMonth, isLoading } = useAppContext();
+  const { changeMonth, isLoading, levelInfo } = useAppContext();
   const [showInput, setShowInput] = useState(false);
+  const [toast, setToast] = useState<{ xpGained: number } | null>(null);
+  const prevXpRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (prevXpRef.current !== null && levelInfo.xp > prevXpRef.current) {
+      setToast({ xpGained: levelInfo.xp - prevXpRef.current });
+    }
+    prevXpRef.current = levelInfo.xp;
+  }, [levelInfo.xp]);
 
   const pan = Gesture.Pan()
     .activeOffsetX([-20, 20])
@@ -48,6 +58,17 @@ export default function HomeScreen() {
       <Pressable style={styles.addButton} onPress={() => setShowInput(true)}>
         <Ionicons name="add" size={32} color="white" />
       </Pressable>
+
+      {toast && (
+        <XPToast
+          level={levelInfo.level}
+          xpInLevel={levelInfo.xpInLevel}
+          xpToNext={levelInfo.xpToNext}
+          xpGained={toast.xpGained}
+          visible={!!toast}
+          onHide={() => setToast(null)}
+        />
+      )}
 
       <AddRecordModal visible={showInput} close={() => setShowInput(false)} />
     </View>

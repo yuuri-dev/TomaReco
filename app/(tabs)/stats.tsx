@@ -7,7 +7,7 @@ import { useAppContext } from '@/context/AppContext';
 import { useShare } from '@/hooks/useShare';
 import { calculateLongestStreak } from '@/utils/stats';
 import { Ionicons } from '@expo/vector-icons';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import ViewShot from 'react-native-view-shot';
 
@@ -17,28 +17,48 @@ export default function StatsScreen() {
   const [showPieModal, setShowPieModal] = useState(false);
   const [summaryTab, setSummaryTab] = useState<'month' | 'all'>('month');
 
-  const today = new Date();
-  const monthRecords = records.filter(
-    (r) => r.year === today.getFullYear() && r.month === today.getMonth()
+  const today = useMemo(() => new Date(), []);
+
+  const monthRecords = useMemo(
+    () => records.filter((r) => r.year === today.getFullYear() && r.month === today.getMonth()),
+    [records, today]
   );
-  const studyDays = new Set(monthRecords.map((r) => r.day)).size;
-  const longestStreak = calculateLongestStreak(records);
-  const totalStudyDays = new Set(records.map((r) => `${r.year}-${r.month}-${r.day}`)).size;
-  const activeGenres = genres.filter((g) => records.some((r) => r.genreId === g.id)).length;
 
-  const genreStats: GenreStat[] = genres
-    .map((g) => ({ genre: g, count: records.filter((r) => r.genreId === g.id).length }))
-    .filter((item) => item.count > 0)
-    .sort((a, b) => b.count - a.count);
+  const studyDays = useMemo(() => new Set(monthRecords.map((r) => r.day)).size, [monthRecords]);
 
-  const last7 = Array.from({ length: 7 }, (_, i) => {
-    const d = new Date(today);
-    d.setDate(today.getDate() - 6 + i);
-    const hasStudy = records.some(
-      (r) => r.year === d.getFullYear() && r.month === d.getMonth() && r.day === d.getDate()
-    );
-    return { date: d, hasStudy, isToday: i === 6 };
-  });
+  const longestStreak = useMemo(() => calculateLongestStreak(records), [records]);
+
+  const totalStudyDays = useMemo(
+    () => new Set(records.map((r) => `${r.year}-${r.month}-${r.day}`)).size,
+    [records]
+  );
+
+  const activeGenres = useMemo(
+    () => genres.filter((g) => records.some((r) => r.genreId === g.id)).length,
+    [genres, records]
+  );
+
+  const genreStats: GenreStat[] = useMemo(
+    () =>
+      genres
+        .map((g) => ({ genre: g, count: records.filter((r) => r.genreId === g.id).length }))
+        .filter((item) => item.count > 0)
+        .sort((a, b) => b.count - a.count),
+    [genres, records]
+  );
+
+  const last7 = useMemo(
+    () =>
+      Array.from({ length: 7 }, (_, i) => {
+        const d = new Date(today);
+        d.setDate(today.getDate() - 6 + i);
+        const hasStudy = records.some(
+          (r) => r.year === d.getFullYear() && r.month === d.getMonth() && r.day === d.getDate()
+        );
+        return { date: d, hasStudy, isToday: i === 6 };
+      }),
+    [records, today]
+  );
 
   return (
     <View style={styles.root}>

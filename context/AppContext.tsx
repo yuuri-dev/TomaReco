@@ -5,10 +5,12 @@ import {
   requestNotificationPermission,
   scheduleDailyReminder,
 } from '@/utils/notification';
+import { calculateXP, getLevelInfo, LevelInfo } from '@/utils/level';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Alert } from 'react-native';
 
+const DATA_KEY = 'tomato-data';
 const NOTIFICATION_KEY = 'tomato-notification';
 
 const defaultGenres: Genre[] = [
@@ -30,6 +32,7 @@ type AppContextType = {
   month: number;
   calendarDays: ({ day: number } | null)[];
   streak: number;
+  levelInfo: LevelInfo;
   isLoading: boolean;
   saveRecord: (title: string) => void;
   saveGenre: (name: string, color: string) => void;
@@ -70,42 +73,44 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     ...days,
   ];
 
-  function calculateStreak(recs: Record[]) {
-    const dates = recs.map((r) => new Date(r.year, r.month, r.day).toDateString());
-    const uniqueDates = [...new Set(dates)];
-    let streak = 0;
+  const levelInfo = useMemo(() => getLevelInfo(calculateXP(records)), [records]);
+
+  const streak = useMemo(() => {
+    const dates = records.map((r) => new Date(r.year, r.month, r.day).toDateString());
+    const uniqueDates = new Set(dates);
+    let count = 0;
     const current = new Date();
-    while (uniqueDates.includes(current.toDateString())) {
-      streak++;
+    while (uniqueDates.has(current.toDateString())) {
+      count++;
       current.setDate(current.getDate() - 1);
     }
-    return streak;
-  }
-
-  const streak = calculateStreak(records);
+    return count;
+  }, [records]);
 
   useEffect(() => {
     const load = async () => {
       try {
-        const json = await AsyncStorage.getItem('tomato-data');
+        const json = await AsyncStorage.getItem(DATA_KEY);
 
         if (json !== null) {
           const data = JSON.parse(json);
 
           type PersistedRecord = Omit<Record, 'id'> & { id?: string };
-          const loadedRecords: Record[] = (data.records || []).map(
+          const rawRecords = Array.isArray(data.records) ? data.records : [];
+          const loadedRecords: Record[] = rawRecords.map(
             (r: PersistedRecord): Record => ({
               id: r.id ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`,
-              year: r.year,
-              month: r.month,
-              day: r.day,
-              title: r.title,
-              genreId: r.genreId,
+              year: Number(r.year),
+              month: Number(r.month),
+              day: Number(r.day),
+              title: String(r.title ?? ''),
+              genreId: String(r.genreId ?? ''),
             })
           );
 
+          const rawGenres = Array.isArray(data.genres) ? data.genres : null;
           setRecords(loadedRecords);
-          setGenres(data.genres || defaultGenres);
+          setGenres(rawGenres ?? defaultGenres);
         }
 
         const notifJson = await AsyncStorage.getItem(NOTIFICATION_KEY);
@@ -127,28 +132,44 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     load();
   }, []);
 
+  const isSavingRef = useRef(false);
+  const pendingSaveRef = useRef<{ records: Record[]; genres: Genre[] } | null>(null);
+
+  const flushSave = useCallback(async (data: { records: Record[]; genres: Genre[] }) => {
+    if (isSavingRef.current) {
+      pendingSaveRef.current = data;
+      return;
+    }
+    isSavingRef.current = true;
+    try {
+      await AsyncStorage.setItem(DATA_KEY, JSON.stringify(data));
+    } catch {
+      Alert.alert('エラー', 'データの保存に失敗しました');
+    } finally {
+      isSavingRef.current = false;
+      if (pendingSaveRef.current) {
+        const next = pendingSaveRef.current;
+        pendingSaveRef.current = null;
+        flushSave(next);
+      }
+    }
+  }, []);
+
   useEffect(() => {
     if (isLoading) return;
-
-    const save = async () => {
-      try {
-        await AsyncStorage.setItem(
-          'tomato-data',
-          JSON.stringify({ records, genres })
-        );
-      } catch {
-        Alert.alert('エラー', 'データの保存に失敗しました');
-      }
-    };
-
-    save();
-  }, [records, genres, isLoading]);
+    flushSave({ records, genres });
+  }, [records, genres, isLoading, flushSave]);
 
   function changeMonth(diff: number) {
     setCurrentDate((prev) => {
       const next = new Date(prev);
       next.setMonth(prev.getMonth() + diff);
       return next;
+    });
+    setSelectedDay((prev) => {
+      const nextDate = new Date(year, month + diff + 1, 0);
+      const maxDay = nextDate.getDate();
+      return Math.min(prev, maxDay);
     });
   }
 
@@ -160,11 +181,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   function saveRecord(title: string) {
     const genre = genres.find((g) => g.id === selectedGenreId);
+    const maxDay = new Date(year, month + 1, 0).getDate();
+    const safeDay = Math.min(selectedDay, maxDay);
     const newRecord: Record = {
       id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
       year,
       month,
-      day: selectedDay,
+      day: safeDay,
       title: title.trim() || (genre ? `${genre.name}の学習` : '学習'),
       genreId: selectedGenreId,
     };
@@ -172,9 +195,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }
 
   function saveGenre(name: string, color: string) {
+    const trimmed = name.trim();
+    if (!trimmed) return;
     const newGenre: Genre = {
       id: Date.now().toString(),
-      name,
+      name: trimmed,
       color,
     };
     setGenres((prev) => [...prev, newGenre]);
@@ -199,12 +224,22 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }
 
   function deleteGenre(id: string) {
+    if (genres.length <= 1) {
+      Alert.alert('削除できません', 'ジャンルは1つ以上必要です');
+      return;
+    }
     Alert.alert('ジャンル削除', '削除しますか？', [
       { text: 'キャンセル', style: 'cancel' },
       {
         text: '削除',
         style: 'destructive',
-        onPress: () => setGenres((prev) => prev.filter((g) => g.id !== id)),
+        onPress: () => {
+          if (selectedGenreId === id) {
+            const next = genres.find((g) => g.id !== id);
+            if (next) setSelectedGenreId(next.id);
+          }
+          setGenres((prev) => prev.filter((g) => g.id !== id));
+        },
       },
     ]);
   }
@@ -250,9 +285,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           text: '削除する',
           style: 'destructive',
           onPress: async () => {
-            setRecords([]);
-            setGenres(defaultGenres);
-            await AsyncStorage.removeItem('tomato-data');
+            try {
+              await AsyncStorage.removeItem(DATA_KEY);
+              setRecords([]);
+              setGenres(defaultGenres);
+            } catch {
+              Alert.alert('エラー', 'データの削除に失敗しました');
+            }
           },
         },
       ]
@@ -274,6 +313,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         month,
         calendarDays,
         streak,
+        levelInfo,
         isLoading,
         saveRecord,
         saveGenre,

@@ -20,9 +20,9 @@ export function useShare(streak: number) {
         await Share.share({ message });
       }
     } catch (e: unknown) {
-      // ユーザーがキャンセルした場合は何もしない
       if (e instanceof Error && e.message !== 'User did not share') {
-        Alert.alert('エラー', '画像の生成に失敗しました');
+        const isCaptureError = e.message.toLowerCase().includes('capture') || e.message.toLowerCase().includes('shot');
+        Alert.alert('エラー', isCaptureError ? '画像の生成に失敗しました' : 'シェアに失敗しました');
       }
     }
   }

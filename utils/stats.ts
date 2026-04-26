@@ -9,7 +9,7 @@ export function calculateLongestStreak(records: Record[]): number {
   let max = 1;
   let current = 1;
   for (let i = 1; i < unique.length; i++) {
-    const diff = (unique[i] - unique[i - 1]) / (1000 * 60 * 60 * 24);
+    const diff = Math.round((unique[i] - unique[i - 1]) / (1000 * 60 * 60 * 24));
     if (diff === 1) {
       current++;
       if (current > max) max = current;

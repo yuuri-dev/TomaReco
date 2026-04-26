@@ -145,12 +145,9 @@ eas submit --platform ios --latest  # ターミナルで直接実行（認証が
 
 ### 現在の仮説
 - 新規アプリのためAdMobの広告フィル率が低い（数日〜数週間で改善することがある）
-- `BannerAd.tsx` に `console.warn` デバッグログを追加済みだが、EAS無料プランのビルド上限（月次）に達して検証できていない
+- `console.warn` デバッグログは削除済み（2026-04-21）
 
 ### 5月1日以降にやること
 1. `eas build --platform ios --profile development` で開発ビルドを作成（端末登録済み）
-2. Xcodeコンソールで `AdBanner` を検索してログを確認
-3. ログ: `[AdBanner] NativeBannerAd: true/false, size: true/false, unitId: xxx`
-   - どれかが false/空 → コードの問題
-   - 全部 true → AdMobのフィル率の問題（しばらく待つ）
-4. 確認後 `console.warn` デバッグログは削除する（`components/Ads/BannerAd.tsx:31`）
+2. Xcodeコンソールで `AdBanner` を検索して `onAdFailedToLoad` ログを確認
+3. ログが出ない → AdMobのフィル率の問題（しばらく待つ）

@@ -9,11 +9,15 @@ export default function Index() {
   const [target, setTarget] = useState<string | null>(null);
 
   useEffect(() => {
-    AsyncStorage.getItem(ONBOARDING_KEY).then((val) => {
-      setTarget(val === 'true' ? '/home' : '/onboarding');
-    });
+    AsyncStorage.getItem(ONBOARDING_KEY)
+      .then((val) => {
+        setTarget(val === 'true' ? '/home' : '/onboarding');
+      })
+      .catch(() => {
+        setTarget('/onboarding');
+      });
   }, []);
 
   if (!target) return <View style={{ flex: 1, backgroundColor: '#fff' }} />;
-  return <Redirect href={target as any} />;
+  return <Redirect href={target as '/home' | '/onboarding'} />;
 }

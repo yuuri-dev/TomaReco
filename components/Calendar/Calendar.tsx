@@ -1,4 +1,5 @@
 import { useAppContext } from '@/context/AppContext';
+import { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import DayCell from './DayCell';
 
@@ -10,6 +11,16 @@ export default function Calendar({ onDoubleTap }: Props) {
   const { calendarDays, records, setSelectedDay, year, month, selectedDay } =
     useAppContext();
   const today = new Date();
+
+  const studyDaySet = useMemo(() => {
+    const set = new Set<number>();
+    records.forEach((r) => {
+      if (r.year === year && r.month === month) {
+        set.add(r.day);
+      }
+    });
+    return set;
+  }, [records, year, month]);
 
   return (
     <View style={styles.calendar}>
@@ -34,9 +45,7 @@ export default function Calendar({ onDoubleTap }: Props) {
             return <View key={index} style={styles.day} />;
           }
 
-          const hasStudy = records.some(
-            (r) => r.year === year && r.month === month && r.day === item.day
-          );
+          const hasStudy = studyDaySet.has(item.day);
 
           const isToday =
             today.getFullYear() === year &&
